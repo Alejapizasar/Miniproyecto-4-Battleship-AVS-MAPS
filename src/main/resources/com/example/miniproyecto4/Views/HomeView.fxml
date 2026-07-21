@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.miniproyecto4.controller.HomeController">
    <children>
       <ImageView fitHeight="408.0" fitWidth="607.0" layoutX="-2.0" layoutY="-7.0" pickOnBounds="true" smooth="false">
          <image>
@@ -87,7 +87,7 @@
          <center>
             <VBox alignment="CENTER" prefHeight="102.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #151B2E; -fx-max-width: 200; -fx-border-radius: 2; -fx-border-width: 2; -fx-border-color: #8B7043;" BorderPane.alignment="CENTER">
                <children>
-                  <Button alignment="TOP_CENTER" mnemonicParsing="false" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="NUEVA PARTIDA" textAlignment="CENTER" textFill="#f8f6f6">
+                  <Button fx:id="startBtn" alignment="TOP_CENTER" mnemonicParsing="false" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="NUEVA PARTIDA" textAlignment="CENTER" textFill="#f8f6f6">
                      <font>
                         <Font name="Courier New Bold" size="16.0" />
                      </font>
@@ -95,7 +95,7 @@
                         <DropShadow />
                      </effect>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" prefHeight="32.0" prefWidth="149.0" style="-fx-background-color: #0E4338; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="CONTINUAR" textAlignment="CENTER" textFill="#f8f6f6">
+                  <Button fx:id="continueBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="32.0" prefWidth="149.0" style="-fx-background-color: #0E4338; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="CONTINUAR" textAlignment="CENTER" textFill="#f8f6f6">
                      <font>
                         <Font name="Courier New Bold" size="16.0" />
                      </font>
@@ -103,7 +103,7 @@
                         <DropShadow />
                      </effect>
                   </Button>
-                  <Button alignment="CENTER" maxWidth="145.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="145.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="  SALIR  " textAlignment="CENTER" textFill="#f8f6f6">
+                  <Button fx:id="quitBtn" alignment="CENTER" maxWidth="145.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="145.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;" text="  SALIR  " textAlignment="CENTER" textFill="#f8f6f6">
                      <font>
                         <Font name="Courier New Bold" size="16.0" />
                      </font>

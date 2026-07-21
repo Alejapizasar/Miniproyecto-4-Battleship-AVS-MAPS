@@ -1,0 +1,244 @@
+package com.example.miniproyecto4.view;
+
+import com.example.miniproyecto4.model.Orientation;
+
+import javafx.geometry.Pos;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+
+/**
+ * A single cell of a Battleship board, drawn entirely with JavaFX 2D shapes
+ * (no images). Each instance is a small {@link StackPane} that can be added
+ * directly into a {@code GridPane} column/row, and redrawn on demand by
+ * calling {@link #setState(CellState)}.
+ *
+ * <p>When a cell holds part of a ship, the actual hull graphic is delegated
+ * to {@link ShipShapeFactory} so the bow/stern/mid-section look different
+ * from each other instead of every cell showing the same generic block.
+ * Call {@link #setShipSegmentInfo(int, int, Orientation)} once, right after
+ * placement, before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
+ *
+ * <p>{@link #setKeyboardFocused(boolean)} draws a border highlight so
+ * arrow-key navigation has a visible cursor, independent from the cell's
+ * logical {@link CellState}.</p>
+ *
+ * @author Alejandro Valencia Sandoval
+ */
+public class BoardCellView extends StackPane
+{
+    private static final double CELL_SIZE = 32.0;
+
+    private static final Color WATER_DARK = Color.web("#0B3D5C");
+    private static final Color WATER_LIGHT = Color.web("#2E7DAF");
+    private static final Color MISS_MARK = Color.web("#D9E6EF");
+    private static final Color SUNK_OVERLAY = Color.web("#1A1A1A");
+    private static final Color CURSOR_HIGHLIGHT = Color.web("#F2C14E");
+
+    private CellState state;
+
+    // Info del barco al que pertenece esta casilla (para elegir la figura
+    // correcta: proa, popa o cuerpo central). Solo es relevante cuando
+    // state es SHIP, HIT o SUNK.
+    private int shipSize = 1;
+    private int segmentIndex = 0;
+    private Orientation orientation = Orientation.HORIZONTAL;
+
+    // Cursor de teclado: no cambia el estado logico de la celda, solo
+    // dibuja un borde encima para indicar donde caeria SPACE.
+    private boolean keyboardFocused = false;
+
+    public BoardCellView()
+    {
+        this.state = CellState.WATER;
+        this.getStyleClass().add("board-cell");
+        this.setPrefSize(CELL_SIZE, CELL_SIZE);
+        this.setMinSize(CELL_SIZE, CELL_SIZE);
+        this.setAlignment(Pos.CENTER);
+        this.render();
+    }
+
+    /**
+     * Registra a qué barco pertenece esta casilla, para que el segmento
+     * dibujado (proa / cuerpo / popa) sea el correcto. Debe llamarse antes
+     * de {@link #setState(CellState)} cuando el nuevo estado sea SHIP.
+     *
+     * @param shipSize     tamaño total del barco (1 a 4)
+     * @param segmentIndex posición de esta casilla dentro del barco (0-based)
+     * @param orientation  orientación con la que quedó colocado el barco
+     */
+    public void setShipSegmentInfo(int shipSize, int segmentIndex, Orientation orientation)
+    {
+        this.shipSize = shipSize;
+        this.segmentIndex = segmentIndex;
+        this.orientation = orientation;
+    }
+
+    /**
+     * Updates the logical state of the cell and redraws its graphic.
+     *
+     * @param newState the new state to represent visually
+     */
+    public void setState(CellState newState)
+    {
+        this.state = newState;
+        this.render();
+    }
+
+    public CellState getState()
+    {
+        return this.state;
+    }
+
+    /**
+     * Toggles the keyboard-cursor highlight border on this cell, used by
+     * arrow-key navigation. Purely visual, does not affect {@link #getState()}.
+     *
+     * @param focused true to draw the highlight border, false to remove it
+     */
+    public void setKeyboardFocused(boolean focused)
+    {
+        this.keyboardFocused = focused;
+        this.render();
+    }
+
+    // Clears the current children and rebuilds the shapes for the current state.
+    private void render()
+    {
+        this.getChildren().clear();
+        this.getChildren().add(this.buildWater());
+        this.getStyleClass().removeAll("cell-hit", "cell-sunk", "cell-miss");
+
+        switch (this.state)
+        {
+            case SHIP:
+                this.getChildren().add(this.buildShipSegment());
+                break;
+            case MISS:
+                this.getChildren().add(this.buildMissMark());
+                this.getStyleClass().add("cell-miss");
+                break;
+            case HIT:
+                this.getChildren().add(this.buildShipSegment());
+                this.getChildren().add(this.buildHitBurst());
+                this.getStyleClass().add("cell-hit");
+                break;
+            case SUNK:
+                this.getChildren().add(this.buildShipSegment());
+                this.getChildren().add(this.buildSunkOverlay());
+                this.getStyleClass().add("cell-sunk");
+                break;
+            case WATER:
+            default:
+                break;
+        }
+
+        if (this.keyboardFocused)
+        {
+            this.getChildren().add(this.buildCursorHighlight());
+        }
+    }
+
+    // Base tile: a soft blue gradient plus two faint wave lines for texture.
+    private StackPane buildWater()
+    {
+        StackPane layer = new StackPane();
+
+        Rectangle background = new Rectangle(CELL_SIZE, CELL_SIZE);
+        background.setFill(new RadialGradient(0, 0, 0.5, 0.5, 0.9, true,
+                CycleMethod.NO_CYCLE,
+                new Stop(0, WATER_LIGHT),
+                new Stop(1, WATER_DARK)));
+
+        Polyline waveOne = new Polyline(
+                4, 10, 10, 14, 16, 10, 22, 14, 28, 10);
+        waveOne.setStroke(Color.web("#8FD0F0", 0.35));
+        waveOne.setStrokeWidth(1.2);
+        waveOne.setFill(null);
+
+        Polyline waveTwo = new Polyline(
+                4, 20, 10, 24, 16, 20, 22, 24, 28, 20);
+        waveTwo.setStroke(Color.web("#8FD0F0", 0.25));
+        waveTwo.setStrokeWidth(1.2);
+        waveTwo.setFill(null);
+
+        layer.getChildren().addAll(background, waveOne, waveTwo);
+        return layer;
+    }
+
+    // Delegates the actual hull drawing to ShipShapeFactory so bow/mid/stern differ.
+    private javafx.scene.Group buildShipSegment()
+    {
+        return ShipShapeFactory.buildSegment(this.shipSize, this.segmentIndex, this.orientation);
+    }
+
+    // "Agua": an X mark over the water, per the assignment's own notation.
+    private javafx.scene.Group buildMissMark()
+    {
+        Line lineA = new Line(-8, -8, 8, 8);
+        Line lineB = new Line(-8, 8, 8, -8);
+        for (Line line : new Line[] { lineA, lineB })
+        {
+            line.setStroke(MISS_MARK);
+            line.setStrokeWidth(2.5);
+            line.setStrokeLineCap(StrokeLineCap.ROUND);
+        }
+        return new javafx.scene.Group(lineA, lineB);
+    }
+
+    // "Tocado": a small fiery burst drawn from layered circles.
+    private javafx.scene.Group buildHitBurst()
+    {
+        Circle outer = new Circle(9);
+        outer.setFill(new RadialGradient(0, 0, 0.5, 0.5, 1, true,
+                CycleMethod.NO_CYCLE,
+                new Stop(0, Color.web("#FFD65C")),
+                new Stop(0.5, Color.web("#F26B2B")),
+                new Stop(1, Color.web("#B3241C", 0.0))));
+
+        Circle core = new Circle(4);
+        core.setFill(Color.web("#FFF2C4"));
+
+        return new javafx.scene.Group(outer, core);
+    }
+
+    // "Hundido": darkens the whole hull and marks it with a bold red X.
+    private javafx.scene.Group buildSunkOverlay()
+    {
+        Rectangle darken = new Rectangle(CELL_SIZE, CELL_SIZE);
+        darken.setFill(Color.color(SUNK_OVERLAY.getRed(), SUNK_OVERLAY.getGreen(),
+                SUNK_OVERLAY.getBlue(), 0.55));
+
+        Line lineA = new Line(-10, -10, 10, 10);
+        Line lineB = new Line(-10, 10, 10, -10);
+        for (Line line : new Line[] { lineA, lineB })
+        {
+            line.setStroke(Color.web("#C62828"));
+            line.setStrokeWidth(3);
+            line.setStrokeLineCap(StrokeLineCap.ROUND);
+        }
+
+        return new javafx.scene.Group(darken, lineA, lineB);
+    }
+
+    // Simple border rectangle drawn on top of everything to mark the
+    // cell the keyboard cursor currently sits on.
+    private Rectangle buildCursorHighlight()
+    {
+        Rectangle highlight = new Rectangle(CELL_SIZE - 2, CELL_SIZE - 2);
+        highlight.setFill(Color.TRANSPARENT);
+        highlight.setStroke(CURSOR_HIGHLIGHT);
+        highlight.setStrokeWidth(2.5);
+        highlight.setArcWidth(4);
+        highlight.setArcHeight(4);
+        return highlight;
+    }
+}

@@ -16,14 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="612.0" style="-fx-background-color: #151B2E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="800.0" maxWidth="1200.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="612.0" style="-fx-background-color: #151B2E;" stylesheets="@../cssguide/battleship.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.miniproyecto4.controller.PlayerController">
    <children>
-      <ImageView fitHeight="624.0" fitWidth="986.0" layoutY="-178.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../Imagenes/mar.JPG" />
-         </image>
-      </ImageView>
-      <BorderPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #151B2E;">
+      <BorderPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="599.0" style="-fx-background-color: #151B2E;">
          <top>
             <VBox alignment="CENTER" prefHeight="18.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
@@ -42,12 +37,12 @@
                               <Insets right="50.0" />
                            </padding>
                         </Label>
-                        <TextField promptText="Andrew" style="-fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;">
+                        <TextField fx:id="namePlayerTextField" promptText="Andrew" style="-fx-border-color: #8B7043; -fx-border-radius: 2; -fx-border-width: 1;">
                            <font>
                               <Font name="Courier New" size="14.0" />
                            </font>
                         </TextField>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                            <image>
                               <Image url="@../Iconos/timon.png" />
                            </image>
@@ -76,7 +71,7 @@
                   </Label>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="verylargeShip" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco%202.JPG" />
                            </image>
@@ -88,7 +83,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -99,7 +94,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="largeShip" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco1.JPG" />
                            </image>
@@ -111,7 +106,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -122,7 +117,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="largeShip2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco1.JPG" />
                            </image>
@@ -134,7 +129,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -145,7 +140,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="mediumsizedShip" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco3.JPG" />
                            </image>
@@ -157,7 +152,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -168,7 +163,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="smallShip" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco%202.JPG" />
                            </image>
@@ -180,7 +175,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -191,7 +186,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="smallShip2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco%202.JPG" />
                            </image>
@@ -203,7 +198,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -214,7 +209,7 @@
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                        <ImageView fx:id="smallShip3" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                            <image>
                               <Image url="@../Imagenes/barco%202.JPG" />
                            </image>
@@ -226,7 +221,7 @@
                                     <Font name="Courier New" size="10.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
+                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 30;">
                                  <image>
                                     <Image url="@../Imagenes/tamaño.JPG" />
                                  </image>
@@ -249,7 +244,7 @@
                         <Font name="Courier New" size="12.0" />
                      </font>
                   </Label>
-                  <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Rotar Barco" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="rotateShipBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Rotar Barco" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
@@ -264,9 +259,9 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="97.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Limpiar Tablero" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="clearBoardBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="97.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Limpiar Tablero" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
                               <Image url="@../Iconos/basura.png" />
                            </image>
@@ -279,9 +274,9 @@
                         <Font name="Courier New Bold" size="11.0" />
                      </font>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" prefHeight="49.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Posicion Aleatoria" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="randomPositionBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="49.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Posicion Aleatoria" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
                               <Image url="@../Iconos/aleatorio.png" />
                            </image>
@@ -291,12 +286,12 @@
                         </ImageView>
                      </graphic>
                      <font>
-                        <Font name="Courier New" size="11.0" />
+                        <Font name="Courier New" size="7.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="96.0" style="-fx-background-color: #0E4338; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Jugar" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="playBtn" mnemonicParsing="false" prefHeight="32.0" prefWidth="96.0" style="-fx-background-color: #0E4338; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Jugar" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/jugar.png" />
                            </image>
@@ -306,9 +301,9 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="33.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="quitBtn" mnemonicParsing="false" prefHeight="33.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/exit.png" />
                            </image>
@@ -332,7 +327,7 @@
                         <Font name="Courier New" size="12.0" />
                      </font>
                   </Label>
-                  <GridPane alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                  <GridPane fx:id="playerBoard" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
                      <columnConstraints>
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -982,7 +977,7 @@
             </VBox>
          </center>
          <bottom>
-            <HBox alignment="CENTER_LEFT" prefHeight="47.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+            <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="640.0" BorderPane.alignment="CENTER" />
          </bottom>
       </BorderPane>
    </children>

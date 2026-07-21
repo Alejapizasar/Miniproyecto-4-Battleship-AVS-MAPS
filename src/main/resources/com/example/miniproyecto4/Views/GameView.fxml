@@ -14,8 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #151B2E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #151B2E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.miniproyecto4.controller.GameController">
    <children>
       <ImageView fitHeight="409.0" fitWidth="612.0" layoutX="-4.0" layoutY="-2.0" pickOnBounds="true">
          <image>
@@ -29,7 +28,7 @@
                   <Insets bottom="10" left="16" right="16" top="10" />
                </padding>
                <children>
-                  <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="143.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Guardar partida" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="saveGameBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="143.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Guardar partida" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
@@ -41,7 +40,7 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="194.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Ver tablero enemigo" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="viewEnemyBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="194.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Ver tablero enemigo" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
@@ -53,7 +52,7 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Pausa" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="pauseBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Pausa" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
@@ -65,7 +64,7 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="exitBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
@@ -86,14 +85,14 @@
                   <Insets bottom="20" left="20" right="20" top="20" />
                </padding>
                <children>
-                  <VBox alignment="CENTER" prefWidth="381.0" spacing="8" style="-fx-background-color: #151B2E;">
+                  <VBox fx:id="userPanel" alignment="CENTER" prefWidth="381.0" spacing="8" style="-fx-background-color: #151B2E;">
                      <children>
                         <Label text="Tu tablero" textFill="#8b7043">
                            <font>
                               <Font name="Courier New Bold" size="14.0" />
                            </font>
                         </Label>
-                        <GridPane alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                        <GridPane fx:id="gridUser" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
                            <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -735,14 +734,14 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" spacing="8" style="-fx-background-color: #151B2E;">
+                  <VBox fx:id="iaPanel" alignment="CENTER" spacing="8" style="-fx-background-color: #151B2E;">
                      <children>
                         <Label text="Tablero enemigo" textAlignment="CENTER" textFill="#8b7043">
                            <font>
                               <Font name="Courier New" size="14.0" />
                            </font>
                         </Label>
-                        <GridPane alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                        <GridPane fx:id="girdIa" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
                            <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -1402,7 +1401,7 @@
                         <Image url="@../Iconos/timon.png" />
                      </image>
                   </ImageView>
-                  <Label alignment="CENTER" prefHeight="50.0" prefWidth="128.0" text="INFORMACION DE LA PARTIDA" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                  <Label fx:id="infoLabel" alignment="CENTER" prefHeight="50.0" prefWidth="128.0" text="INFORMACION DE LA PARTIDA" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                      <font>
                         <Font name="Courier New Bold" size="12.0" />
                      </font>
@@ -1414,7 +1413,7 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="countshoot" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1426,12 +1425,12 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="23.0" prefWidth="128.0" spacing="20.0">
                      <children>
-                        <Label alignment="CENTER" text="Impactos" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="impactlabel" alignment="CENTER" text="Impactos" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="impactcount" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1445,7 +1444,7 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="failcount" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1459,14 +1458,14 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="shipdestroy" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
                      </children>
                   </HBox>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                  <ImageView fx:id="attack" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                      <image>
                         <Image url="@../Iconos/timon.png" />
                      </image>
