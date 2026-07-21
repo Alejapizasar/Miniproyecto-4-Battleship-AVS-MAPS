@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.SepiaTone?>
+<?import javafx.scene.effect.Shadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="408.0" fitWidth="607.0" layoutX="-2.0" layoutY="-7.0" pickOnBounds="true" smooth="false">
+         <image>
+            <Image url="@../Imagenes/Final.JPG" />
+         </image>
+      </ImageView>
+      <BorderPane layoutX="-8.0" layoutY="-7.0" prefHeight="386.0" prefWidth="615.0">
+         <bottom>
+            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="615.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <children>
+                  <HBox alignment="CENTER" prefHeight="82.0" prefWidth="582.0" spacing="16" style="-fx-background-color: #151B2E; -fx-border-color: #8B7043; -fx-border-radius: 3;">
+                     <padding>
+                        <Insets bottom="10" left="16" right="16" top="10" />
+                     </padding>
+                     <children>
+                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="143.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Nueva partida" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                                 <image>
+                                    <Image url="@../Iconos/rotar.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <font>
+                              <Font name="Courier New" size="11.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="129.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Menu Principal" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                                 <image>
+                                    <Image url="@../Iconos/menu.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <font>
+                              <Font name="Courier New" size="11.0" />
+                           </font>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                                 <image>
+                                    <Image url="@../Iconos/exit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <font>
+                              <Font name="Courier New" size="11.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+         </bottom>
+         <top>
+            <VBox alignment="TOP_CENTER" prefHeight="160.0" prefWidth="615.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="77.0" fitWidth="156.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Iconos/logo.png" />
+                     </image>
+                     <effect>
+                        <InnerShadow />
+                     </effect>
+                  </ImageView>
+                  <Label alignment="CENTER" prefHeight="52.0" prefWidth="421.0" text="¡VICTORIA!" textFill="#909090">
+                     <font>
+                        <Font name="Courier New Bold" size="50.0" />
+                     </font>
+                     <effect>
+                        <DropShadow>
+                           <input>
+                              <Lighting>
+                                 <bumpInput>
+                                    <Shadow>
+                                       <input>
+                                          <SepiaTone />
+                                       </input>
+                                    </Shadow>
+                                 </bumpInput>
+                                 <light>
+                                    <Light.Distant />
+                                 </light>
+                              </Lighting>
+                           </input>
+                        </DropShadow>
+                     </effect>
+                  </Label>
+                  <Label alignment="CENTER" prefHeight="23.0" prefWidth="384.0" style="-fx-background-color: #151B2E; -fx-border-color: #8B7043; -fx-border-radius: 3;" text="¡Hundiste todos los barcos enemigos!" textFill="#d7a95f">
+                     <font>
+                        <Font name="Courier New Bold" size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </top>
+         <right>
+            <VBox alignment="CENTER" maxWidth="335.0" prefHeight="193.0" prefWidth="260.0" spacing="10.0" style="-fx-background-color: #151B2E; -fx-border-radius: 3; -fx-border-width: 1; -fx-border-color: #8B7043;" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 45;">
+                           <image>
+                              <Image url="@../Iconos/timon.png" />
+                           </image>
+                        </ImageView>
+                        <Label alignment="CENTER" prefHeight="50.0" prefWidth="128.0" text="ESTADISTICAS" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 45;">
+                           <image>
+                              <Image url="@../Iconos/timon.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="42.0" prefWidth="156.0" spacing="20.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="28.0" prefWidth="186.0" text="Disparos realizados: " textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" text="5" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="17.0" prefWidth="328.0" spacing="20.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="15.0" prefWidth="189.0" text="Impactos acertados: " textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="42.0" prefWidth="156.0" spacing="20.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="28.0" prefWidth="192.0" text="Barcos hundidos:" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="42.0" prefWidth="156.0" spacing="20.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="28.0" prefWidth="192.0" text="Turnos jugados: " textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                           <font>
+                              <Font name="Courier New" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </right>
+         <center>
+            <ImageView fitHeight="164.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../Iconos/barco2.png" />
+               </image>
+            </ImageView>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
