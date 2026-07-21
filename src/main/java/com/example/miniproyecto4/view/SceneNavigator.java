@@ -35,6 +35,25 @@ public class SceneNavigator
      */
     public void navigateTo(Node sourceNode, String fxmlResourcePath, String windowTitle) throws IOException
     {
+        this.navigateToAndGetController(sourceNode, fxmlResourcePath, windowTitle);
+    }
+
+    /**
+     * Same as {@link #navigateTo}, but also returns the controller that
+     * FXMLLoader created for the destination view. Callers use this when
+     * the new screen needs data from the screen that is being left (e.g.
+     * PlayerController handing its placed Board over to GameController)
+     * instead of reaching for a Singleton or static state.
+     *
+     * @param sourceNode      any node currently attached to the active Stage
+     * @param fxmlResourcePath classpath-relative path to the target FXML file
+     * @param windowTitle      title to set on the Stage after switching
+     * @return the controller instance bound to {@code fxmlResourcePath}
+     * @throws IOException if the FXML file cannot be loaded
+     */
+    public Object navigateToAndGetController(Node sourceNode, String fxmlResourcePath, String windowTitle)
+            throws IOException
+    {
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource(fxmlResourcePath));
         Parent root = loader.load();
 
@@ -45,5 +64,7 @@ public class SceneNavigator
         stage.sizeToScene();
         stage.setTitle(windowTitle);
         stage.centerOnScreen();
+
+        return loader.getController();
     }
 }

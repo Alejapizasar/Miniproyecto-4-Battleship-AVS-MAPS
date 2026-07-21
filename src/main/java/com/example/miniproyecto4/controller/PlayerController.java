@@ -1,5 +1,6 @@
 package com.example.miniproyecto4.controller;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 
 import com.example.miniproyecto4.model.Board;
@@ -23,6 +25,7 @@ import com.example.miniproyecto4.strategy.RandomPlacementStrategy;
 import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
 import com.example.miniproyecto4.view.CellState;
 import com.example.miniproyecto4.view.BoardCellView;
+import com.example.miniproyecto4.view.SceneNavigator;
 
 /**
  * Controller for PlayerView.fxml. Wires the fleet placement screen:
@@ -33,6 +36,8 @@ import com.example.miniproyecto4.view.BoardCellView;
  */
 public class PlayerController
 {
+    private static final String GAME_VIEW_FXML = "/com/example/miniproyecto4/Views/GameView.fxml";
+
     @FXML
     private TextField namePlayerTextField;
 
@@ -58,10 +63,16 @@ public class PlayerController
     private final List<Ship> fleet;
     private final Queue<Ship> pendingShips;
     private final Map<Coordinate, BoardCellView> cellViews;
+    private final SceneNavigator sceneNavigator;
 
     private ShipPlacementStrategy manualStrategy;
     private ShipPlacementStrategy randomStrategy;
     private Orientation currentOrientation;
+
+    // Cell currently under the mouse pointer, kept in sync via
+    // setOnMouseEntered on every BoardCellView, so the SPACE key knows
+    // where to place the next pending ship without requiring a click.
+    private Coordinate hoveredCoordinate;
 
     public PlayerController()
     {
@@ -72,6 +83,7 @@ public class PlayerController
         this.manualStrategy = new ManualPlacementStrategy();
         this.randomStrategy = new RandomPlacementStrategy();
         this.currentOrientation = Orientation.HORIZONTAL;
+        this.sceneNavigator = new SceneNavigator();
     }
 
     @FXML
@@ -84,6 +96,17 @@ public class PlayerController
         this.randomPositionBtn.setOnAction(event -> this.handleRandomPlacement());
         this.playBtn.setOnAction(event -> this.handlePlay());
         this.quitBtn.setOnAction(event -> Platform.exit());
+
+        // The Scene does not exist yet during initialize(), so the key
+        // handler is attached as soon as playerBoard is actually attached
+        // to one (immediately after SceneNavigator swaps the root).
+        this.playerBoard.sceneProperty().addListener((observable, oldScene, newScene) ->
+        {
+            if (newScene != null)
+            {
+                newScene.setOnKeyPressed(this::handleKeyPressed);
+            }
+        });
     }
 
     // Fills playerBoard with a BoardCellView per cell and wires clicks.
@@ -101,6 +124,7 @@ public class PlayerController
                 this.playerBoard.add(cellView, column + 1, row + 1);
 
                 cellView.setOnMouseClicked(event -> this.handleCellClicked(coordinate));
+                cellView.setOnMouseEntered(event -> this.hoveredCoordinate = coordinate);
             }
         }
     }
@@ -131,6 +155,39 @@ public class PlayerController
         this.currentOrientation = this.currentOrientation == Orientation.HORIZONTAL
                 ? Orientation.VERTICAL
                 : Orientation.HORIZONTAL;
+    }
+
+    // Routes R / SPACE / ENTER to the same actions the buttons already
+    // trigger, so the whole placement flow can be done without a mouse.
+    private void handleKeyPressed(KeyEvent event)
+    {
+        switch (event.getCode())
+        {
+            case R:
+                this.handleRotate();
+                event.consume();
+                break;
+            case SPACE:
+                this.handlePlaceAtHoveredCell();
+                event.consume();
+                break;
+            case ENTER:
+                this.handlePlay();
+                event.consume();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Places the next pending ship at whatever cell the mouse is
+    // currently over, reusing the exact same logic a click would run.
+    private void handlePlaceAtHoveredCell()
+    {
+        if (this.hoveredCoordinate != null)
+        {
+            this.handleCellClicked(this.hoveredCoordinate);
+        }
     }
 
     private void handleClearBoard()
@@ -170,7 +227,24 @@ public class PlayerController
             // TODO: show an Alert asking the player to finish placing the fleet.
             return;
         }
-        // TODO: navigate to GameView.fxml with SceneNavigator once it is wired.
+
+        try
+        {
+            Object destinationController = this.sceneNavigator.navigateToAndGetController(
+                    this.playBtn, GAME_VIEW_FXML, "Battleship - Game");
+
+            if (destinationController instanceof GameController gameController)
+            {
+                gameController.initializePlayerData(
+                        this.board, this.fleet, this.namePlayerTextField.getText());
+            }
+        }
+        catch (IOException exception)
+        {
+            // TODO: replace with a custom checked exception + Alert dialog
+            // once the exception-handling module of the project is built.
+            exception.printStackTrace();
+        }
     }
 
     private void refreshCellsFor(Ship ship)
