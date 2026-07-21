@@ -27,6 +27,10 @@ import javafx.scene.shape.StrokeLineCap;
  * Call {@link #setShipSegmentInfo(int, int, Orientation)} once, right after
  * placement, before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
  *
+ * <p>{@link #setKeyboardFocused(boolean)} draws a border highlight so
+ * arrow-key navigation has a visible cursor, independent from the cell's
+ * logical {@link CellState}.</p>
+ *
  * @author Alejandro Valencia Sandoval
  */
 public class BoardCellView extends StackPane
@@ -37,6 +41,7 @@ public class BoardCellView extends StackPane
     private static final Color WATER_LIGHT = Color.web("#2E7DAF");
     private static final Color MISS_MARK = Color.web("#D9E6EF");
     private static final Color SUNK_OVERLAY = Color.web("#1A1A1A");
+    private static final Color CURSOR_HIGHLIGHT = Color.web("#F2C14E");
 
     private CellState state;
 
@@ -46,6 +51,10 @@ public class BoardCellView extends StackPane
     private int shipSize = 1;
     private int segmentIndex = 0;
     private Orientation orientation = Orientation.HORIZONTAL;
+
+    // Cursor de teclado: no cambia el estado logico de la celda, solo
+    // dibuja un borde encima para indicar donde caeria SPACE.
+    private boolean keyboardFocused = false;
 
     public BoardCellView()
     {
@@ -89,6 +98,18 @@ public class BoardCellView extends StackPane
         return this.state;
     }
 
+    /**
+     * Toggles the keyboard-cursor highlight border on this cell, used by
+     * arrow-key navigation. Purely visual, does not affect {@link #getState()}.
+     *
+     * @param focused true to draw the highlight border, false to remove it
+     */
+    public void setKeyboardFocused(boolean focused)
+    {
+        this.keyboardFocused = focused;
+        this.render();
+    }
+
     // Clears the current children and rebuilds the shapes for the current state.
     private void render()
     {
@@ -118,6 +139,11 @@ public class BoardCellView extends StackPane
             case WATER:
             default:
                 break;
+        }
+
+        if (this.keyboardFocused)
+        {
+            this.getChildren().add(this.buildCursorHighlight());
         }
     }
 
@@ -201,5 +227,18 @@ public class BoardCellView extends StackPane
         }
 
         return new javafx.scene.Group(darken, lineA, lineB);
+    }
+
+    // Simple border rectangle drawn on top of everything to mark the
+    // cell the keyboard cursor currently sits on.
+    private Rectangle buildCursorHighlight()
+    {
+        Rectangle highlight = new Rectangle(CELL_SIZE - 2, CELL_SIZE - 2);
+        highlight.setFill(Color.TRANSPARENT);
+        highlight.setStroke(CURSOR_HIGHLIGHT);
+        highlight.setStrokeWidth(2.5);
+        highlight.setArcWidth(4);
+        highlight.setArcHeight(4);
+        return highlight;
     }
 }

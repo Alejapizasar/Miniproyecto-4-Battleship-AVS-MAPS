@@ -32,6 +32,12 @@ import com.example.miniproyecto4.view.SceneNavigator;
  * manual placement by clicking playerBoard, random placement via
  * strategy swap, board reset, and rotating the pending orientation.
  *
+ * <p>Keyboard shortcuts (R = rotate, arrows = move cursor, SPACE = place,
+ * ENTER = continue) are attached as an event filter on the Scene, and are
+ * deliberately ignored while {@code namePlayerTextField} has focus so the
+ * player can type their name without triggering game actions. ENTER while
+ * typing the name simply moves focus to the board instead of typing.</p>
+ *
  * @author Alejandro Valencia Sandoval
  */
 public class PlayerController
@@ -69,10 +75,10 @@ public class PlayerController
     private ShipPlacementStrategy randomStrategy;
     private Orientation currentOrientation;
 
-    // Cell currently under the mouse pointer, kept in sync via
-    // setOnMouseEntered on every BoardCellView, so the SPACE key knows
-    // where to place the next pending ship without requiring a click.
-    private Coordinate hoveredCoordinate;
+    // Single source of truth for "where would SPACE place the next ship".
+    // Updated both by mouse hover and by arrow-key navigation, so the two
+    // input methods never disagree about the current target cell.
+    private Coordinate cursorCoordinate;
 
     public PlayerController()
     {
@@ -84,12 +90,14 @@ public class PlayerController
         this.randomStrategy = new RandomPlacementStrategy();
         this.currentOrientation = Orientation.HORIZONTAL;
         this.sceneNavigator = new SceneNavigator();
+        this.cursorCoordinate = new Coordinate(0, 0);
     }
 
     @FXML
     private void initialize()
     {
         this.buildBoardCells();
+        this.playerBoard.setFocusTraversable(true);
 
         this.rotateShipBtn.setOnAction(event -> this.handleRotate());
         this.clearBoardBtn.setOnAction(event -> this.handleClearBoard());
@@ -98,18 +106,27 @@ public class PlayerController
         this.quitBtn.setOnAction(event -> Platform.exit());
 
         // The Scene does not exist yet during initialize(), so the key
-        // handler is attached as soon as playerBoard is actually attached
+        // filter is attached as soon as playerBoard is actually attached
         // to one (immediately after SceneNavigator swaps the root).
         this.playerBoard.sceneProperty().addListener((observable, oldScene, newScene) ->
         {
             if (newScene != null)
             {
-                newScene.setOnKeyPressed(this::handleKeyPressed);
+                // Filter (capture phase) so this runs BEFORE the focused
+                // control (e.g. the TextField) gets a chance to consume
+                // the key event.
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
+
+                // Default focus otherwise lands on namePlayerTextField
+                // (first focusable control), which is exactly why the
+                // shortcuts looked "broken" before. Move it to the board.
+                Platform.runLater(() -> this.playerBoard.requestFocus());
+                this.updateCursorHighlight(true);
             }
         });
     }
 
-    // Fills playerBoard with a BoardCellView per cell and wires clicks.
+    // Fills playerBoard with a BoardCellView per cell and wires clicks/hover.
     private void buildBoardCells()
     {
         for (int row = 0; row < Board.SIZE; row++)
@@ -124,12 +141,99 @@ public class PlayerController
                 this.playerBoard.add(cellView, column + 1, row + 1);
 
                 cellView.setOnMouseClicked(event -> this.handleCellClicked(coordinate));
-                cellView.setOnMouseEntered(event -> this.hoveredCoordinate = coordinate);
+                cellView.setOnMouseEntered(event -> this.moveCursorTo(coordinate));
             }
         }
     }
 
     private void handleCellClicked(Coordinate coordinate)
+    {
+        this.moveCursorTo(coordinate);
+        this.placeShipAt(coordinate);
+    }
+
+    private void handleRotate()
+    {
+        this.currentOrientation = this.currentOrientation == Orientation.HORIZONTAL
+                ? Orientation.VERTICAL
+                : Orientation.HORIZONTAL;
+    }
+
+    // Routes R / arrows / SPACE / ENTER to the placement actions, unless
+    // the player is actively typing their name.
+    private void handleKeyPressed(KeyEvent event)
+    {
+        if (this.namePlayerTextField.isFocused())
+        {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER)
+            {
+                // Treat ENTER in the name field as "done typing", not as
+                // "continue to the next screen".
+                this.playerBoard.requestFocus();
+                event.consume();
+            }
+            return;
+        }
+
+        switch (event.getCode())
+        {
+            case R:
+                this.handleRotate();
+                event.consume();
+                break;
+            case UP:
+                this.moveCursorBy(-1, 0);
+                event.consume();
+                break;
+            case DOWN:
+                this.moveCursorBy(1, 0);
+                event.consume();
+                break;
+            case LEFT:
+                this.moveCursorBy(0, -1);
+                event.consume();
+                break;
+            case RIGHT:
+                this.moveCursorBy(0, 1);
+                event.consume();
+                break;
+            case SPACE:
+                this.placeShipAt(this.cursorCoordinate);
+                event.consume();
+                break;
+            case ENTER:
+                this.handlePlay();
+                event.consume();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void moveCursorBy(int rowDelta, int columnDelta)
+    {
+        int newRow = Math.max(0, Math.min(Board.SIZE - 1, this.cursorCoordinate.getRow() + rowDelta));
+        int newColumn = Math.max(0, Math.min(Board.SIZE - 1, this.cursorCoordinate.getColumn() + columnDelta));
+        this.moveCursorTo(new Coordinate(newRow, newColumn));
+    }
+
+    private void moveCursorTo(Coordinate coordinate)
+    {
+        this.updateCursorHighlight(false);
+        this.cursorCoordinate = coordinate;
+        this.updateCursorHighlight(true);
+    }
+
+    private void updateCursorHighlight(boolean focused)
+    {
+        BoardCellView cellView = this.cellViews.get(this.cursorCoordinate);
+        if (cellView != null)
+        {
+            cellView.setKeyboardFocused(focused);
+        }
+    }
+
+    private void placeShipAt(Coordinate coordinate)
     {
         Ship nextShip = this.pendingShips.peek();
         if (nextShip == null)
@@ -142,51 +246,12 @@ public class PlayerController
             this.manualStrategy.placeShip(this.board, nextShip, coordinate, this.currentOrientation);
             this.pendingShips.poll();
             this.refreshCellsFor(nextShip);
+            this.updateCursorHighlight(true);
         }
         catch (PlacementException exception)
         {
             // TODO: show an Alert telling the player why it did not fit,
             // once the exception-handling module of the project is built.
-        }
-    }
-
-    private void handleRotate()
-    {
-        this.currentOrientation = this.currentOrientation == Orientation.HORIZONTAL
-                ? Orientation.VERTICAL
-                : Orientation.HORIZONTAL;
-    }
-
-    // Routes R / SPACE / ENTER to the same actions the buttons already
-    // trigger, so the whole placement flow can be done without a mouse.
-    private void handleKeyPressed(KeyEvent event)
-    {
-        switch (event.getCode())
-        {
-            case R:
-                this.handleRotate();
-                event.consume();
-                break;
-            case SPACE:
-                this.handlePlaceAtHoveredCell();
-                event.consume();
-                break;
-            case ENTER:
-                this.handlePlay();
-                event.consume();
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Places the next pending ship at whatever cell the mouse is
-    // currently over, reusing the exact same logic a click would run.
-    private void handlePlaceAtHoveredCell()
-    {
-        if (this.hoveredCoordinate != null)
-        {
-            this.handleCellClicked(this.hoveredCoordinate);
         }
     }
 
@@ -253,7 +318,7 @@ public class PlayerController
         for (int i = 0; i < cells.size(); i++)
         {
             BoardCellView cellView = this.cellViews.get(cells.get(i));
-            cellView.setShipSegmentInfo(ship.getSize(), i,ship.getOrientation());
+            cellView.setShipSegmentInfo(ship.getSize(), i, ship.getOrientation());
             cellView.setState(CellState.SHIP);
         }
     }
@@ -268,5 +333,6 @@ public class PlayerController
         {
             this.refreshCellsFor(ship);
         }
+        this.updateCursorHighlight(true);
     }
 }

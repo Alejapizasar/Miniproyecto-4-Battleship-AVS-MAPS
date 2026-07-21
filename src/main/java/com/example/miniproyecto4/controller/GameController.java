@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import com.example.miniproyecto4.model.Board;
 import com.example.miniproyecto4.model.Coordinate;
+import com.example.miniproyecto4.model.PlayerData;
 import com.example.miniproyecto4.model.Ship;
 import com.example.miniproyecto4.view.BoardCellView;
 import com.example.miniproyecto4.view.CellState;
@@ -78,7 +79,7 @@ public class GameController
 
     private Board playerBoard;
     private List<Ship> playerFleet;
-    private String playerName;
+    private PlayerData playerData;
 
     public GameController()
     {
@@ -101,25 +102,27 @@ public class GameController
     /**
      * Injected by PlayerController right after navigating here. Draws the
      * player's fleet on {@code gridUser} exactly as it was placed on the
-     * setup screen, instead of making GameController rebuild placement
-     * logic that already lives in PlayerController/ShipPlacementStrategy.
+     * setup screen, and creates the {@link PlayerData} that will track
+     * this match's stats (shots, hits, misses, ships sunk, winner).
      *
      * @param placedBoard the board the player configured in PlayerController
      * @param fleet       the same fleet instance, already placed
-     * @param name        the name typed by the player, for display in the HUD
+     * @param name        the name typed by the player
      */
     public void initializePlayerData(Board placedBoard, List<Ship> fleet, String name)
     {
         this.playerBoard = placedBoard;
         this.playerFleet = fleet;
-        this.playerName = name;
+        this.playerData = new PlayerData(name);
 
-        if (this.playerName != null && !this.playerName.isBlank())
-        {
-            this.infoLabel.setText(this.playerName);
-        }
-
+        this.infoLabel.setText(this.playerData.getName());
+        this.refreshStatsLabels();
         this.renderPlayerFleet();
+    }
+
+    public PlayerData getPlayerData()
+    {
+        return this.playerData;
     }
 
     // Builds a blank SIZE x SIZE grid of water cells, offset by the
@@ -163,6 +166,22 @@ public class GameController
         }
     }
 
+    // Reflects the current PlayerData counters on the HUD labels already
+    // declared in the FXML. Will be called again every time a shot lands
+    // once the AI/battle module drives playerData.registerShot(...).
+    private void refreshStatsLabels()
+    {
+        if (this.playerData == null)
+        {
+            return;
+        }
+
+        this.countshoot.setText(String.valueOf(this.playerData.getShotsFired()));
+        this.impactcount.setText(String.valueOf(this.playerData.getHits()));
+        this.failcount.setText(String.valueOf(this.playerData.getMisses()));
+        this.shipdestroy.setText(String.valueOf(this.playerData.getShipsSunk()));
+    }
+
     private void handlePause()
     {
         // TODO: pause the turn timer/thread once the concurrency module is built.
@@ -170,7 +189,7 @@ public class GameController
 
     private void handleSaveGame()
     {
-        // TODO: serialize playerBoard/playerFleet once the persistence module is built.
+        // TODO: serialize playerBoard/playerFleet/playerData once the persistence module is built.
     }
 
     private void handleViewEnemy()
