@@ -1,5 +1,7 @@
 package com.example.miniproyecto4.view;
 
+import com.example.miniproyecto4.model.Orientation;
+
 import javafx.geometry.Pos;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
@@ -19,9 +21,11 @@ import javafx.scene.shape.StrokeLineCap;
  * directly into a {@code GridPane} column/row, and redrawn on demand by
  * calling {@link #setState(CellState)}.
  *
- * <p>This class is intentionally the only place in the UI layer that knows
- * how to draw a cell, so the board colors/shapes can be tuned in one spot
- * without touching the controller (single responsibility).</p>
+ * <p>When a cell holds part of a ship, the actual hull graphic is delegated
+ * to {@link ShipShapeFactory} so the bow/stern/mid-section look different
+ * from each other instead of every cell showing the same generic block.
+ * Call {@link #setShipSegmentInfo(int, int, Orientation)} once, right after
+ * placement, before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
  *
  * @author Alejandro Valencia Sandoval
  */
@@ -31,20 +35,42 @@ public class BoardCellView extends StackPane
 
     private static final Color WATER_DARK = Color.web("#0B3D5C");
     private static final Color WATER_LIGHT = Color.web("#2E7DAF");
-    private static final Color HULL_COLOR = Color.web("#4A4A4A");
-    private static final Color HULL_BORDER = Color.web("#8B7043");
     private static final Color MISS_MARK = Color.web("#D9E6EF");
     private static final Color SUNK_OVERLAY = Color.web("#1A1A1A");
 
     private CellState state;
 
+    // Info del barco al que pertenece esta casilla (para elegir la figura
+    // correcta: proa, popa o cuerpo central). Solo es relevante cuando
+    // state es SHIP, HIT o SUNK.
+    private int shipSize = 1;
+    private int segmentIndex = 0;
+    private Orientation orientation = Orientation.HORIZONTAL;
+
     public BoardCellView()
     {
         this.state = CellState.WATER;
+        this.getStyleClass().add("board-cell");
         this.setPrefSize(CELL_SIZE, CELL_SIZE);
         this.setMinSize(CELL_SIZE, CELL_SIZE);
         this.setAlignment(Pos.CENTER);
         this.render();
+    }
+
+    /**
+     * Registra a qué barco pertenece esta casilla, para que el segmento
+     * dibujado (proa / cuerpo / popa) sea el correcto. Debe llamarse antes
+     * de {@link #setState(CellState)} cuando el nuevo estado sea SHIP.
+     *
+     * @param shipSize     tamaño total del barco (1 a 4)
+     * @param segmentIndex posición de esta casilla dentro del barco (0-based)
+     * @param orientation  orientación con la que quedó colocado el barco
+     */
+    public void setShipSegmentInfo(int shipSize, int segmentIndex, Orientation orientation)
+    {
+        this.shipSize = shipSize;
+        this.segmentIndex = segmentIndex;
+        this.orientation = orientation;
     }
 
     /**
@@ -68,22 +94,26 @@ public class BoardCellView extends StackPane
     {
         this.getChildren().clear();
         this.getChildren().add(this.buildWater());
+        this.getStyleClass().removeAll("cell-hit", "cell-sunk", "cell-miss");
 
         switch (this.state)
         {
             case SHIP:
-                this.getChildren().add(this.buildShipHull());
+                this.getChildren().add(this.buildShipSegment());
                 break;
             case MISS:
                 this.getChildren().add(this.buildMissMark());
+                this.getStyleClass().add("cell-miss");
                 break;
             case HIT:
-                this.getChildren().add(this.buildShipHull());
+                this.getChildren().add(this.buildShipSegment());
                 this.getChildren().add(this.buildHitBurst());
+                this.getStyleClass().add("cell-hit");
                 break;
             case SUNK:
-                this.getChildren().add(this.buildShipHull());
+                this.getChildren().add(this.buildShipSegment());
                 this.getChildren().add(this.buildSunkOverlay());
+                this.getStyleClass().add("cell-sunk");
                 break;
             case WATER:
             default:
@@ -118,17 +148,10 @@ public class BoardCellView extends StackPane
         return layer;
     }
 
-    // A rounded hull segment representing part of a ship on this cell.
-    private Rectangle buildShipHull()
+    // Delegates the actual hull drawing to ShipShapeFactory so bow/mid/stern differ.
+    private javafx.scene.Group buildShipSegment()
     {
-        Rectangle hull = new Rectangle(CELL_SIZE * 0.72, CELL_SIZE * 0.72);
-        hull.setArcWidth(8);
-        hull.setArcHeight(8);
-        hull.setFill(HULL_COLOR);
-        hull.setStroke(HULL_BORDER);
-        hull.setStrokeWidth(1.5);
-        hull.setEffect(new DropShadow(4, Color.BLACK));
-        return hull;
+        return ShipShapeFactory.buildSegment(this.shipSize, this.segmentIndex, this.orientation);
     }
 
     // "Agua": an X mark over the water, per the assignment's own notation.

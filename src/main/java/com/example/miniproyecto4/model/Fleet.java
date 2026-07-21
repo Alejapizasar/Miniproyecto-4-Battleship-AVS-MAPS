@@ -20,12 +20,15 @@ public final class Fleet
     {
         List<Ship> ships = new ArrayList<>();
         ships.add(new Ship("Aircraft Carrier", 4));  // verylargeShip
-        ships.add(new Ship("Battleship", 4));        // largeShip
-        ships.add(new Ship("Battleship", 4));         // largeShip2
-        ships.add(new Ship("Patrol Boat", 1));        // mediumsizedShip
-        ships.add(new Ship("Destroyer", 3));          // smallShip
-        ships.add(new Ship("Destroyer", 3));          // smallShip2
-        ships.add(new Ship("Destroyer", 3));          // smallShip3
+        ships.add(new Ship("Submarine", 3));
+        ships.add(new Ship("Submarine", 3));
+        ships.add(new Ship("Destroyer", 2));
+        ships.add(new Ship("Destroyer", 2));
+        ships.add(new Ship("Destroyer", 2));
+        ships.add(new Ship("Frigate", 1));
+        ships.add(new Ship("Frigate", 1));
+        ships.add(new Ship("Frigate", 1));
+        ships.add(new Ship("Frigate", 1));       // smallShip3
         return ships;
     }
 }

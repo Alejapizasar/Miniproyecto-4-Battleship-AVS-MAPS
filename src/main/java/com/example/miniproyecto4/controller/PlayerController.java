@@ -175,9 +175,12 @@ public class PlayerController
 
     private void refreshCellsFor(Ship ship)
     {
-        for (Coordinate cell : ship.getCells())
+        List<Coordinate> cells = ship.getCells();
+        for (int i = 0; i < cells.size(); i++)
         {
-            this.cellViews.get(cell).setState(CellState.SHIP);
+            BoardCellView cellView = this.cellViews.get(cells.get(i));
+            cellView.setShipSegmentInfo(ship.getSize(), i,ship.getOrientation());
+            cellView.setState(CellState.SHIP);
         }
     }
 

@@ -1413,7 +1413,7 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="countshoot" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1425,12 +1425,12 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="23.0" prefWidth="128.0" spacing="20.0">
                      <children>
-                        <Label alignment="CENTER" text="Impactos" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="impactlabel" alignment="CENTER" text="Impactos" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="impactcount" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1444,7 +1444,7 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="failcount" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
@@ -1458,14 +1458,14 @@
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
+                        <Label fx:id="shipdestroy" alignment="CENTER" text="5" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                            <font>
                               <Font name="Courier New" size="12.0" />
                            </font>
                         </Label>
                      </children>
                   </HBox>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                  <ImageView fx:id="attack" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                      <image>
                         <Image url="@../Iconos/timon.png" />
                      </image>
