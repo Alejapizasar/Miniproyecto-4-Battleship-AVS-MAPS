@@ -25,6 +25,7 @@ import com.example.miniproyecto4.strategy.RandomPlacementStrategy;
 import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
 import com.example.miniproyecto4.view.CellState;
 import com.example.miniproyecto4.view.BoardCellView;
+import com.example.miniproyecto4.view.DialogHelper;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 /**
@@ -251,8 +252,9 @@ public class PlayerController
         }
         catch (PlacementException exception)
         {
-            // TODO: show an Alert telling the player why it did not fit,
-            // once the exception-handling module of the project is built.
+            DialogHelper.showWarning("Ubicación inválida",
+                    "No puedes colocar el " + nextShip.getName() + " ahí: se sale del tablero "
+                            + "o se superpone con otro barco ya colocado. Elige otra celda u orientación.");
         }
     }
 
@@ -280,7 +282,9 @@ public class PlayerController
             }
             catch (PlacementException exception)
             {
-                // TODO: show an Alert if the random search fails.
+                DialogHelper.showWarning("Colocación aleatoria",
+                        "No se pudo ubicar aleatoriamente el " + ship.getName()
+                                + ". Presiona 'Colocación aleatoria' de nuevo para reintentar.");
             }
         }
         this.refreshAllCells();
@@ -290,7 +294,9 @@ public class PlayerController
     {
         if (!this.pendingShips.isEmpty())
         {
-            // TODO: show an Alert asking the player to finish placing the fleet.
+            DialogHelper.showWarning("Flota incompleta",
+                    "Aún te falta colocar " + this.pendingShips.size()
+                            + " barco(s) antes de empezar la partida.");
             return;
         }
 
@@ -307,9 +313,8 @@ public class PlayerController
         }
         catch (IOException exception)
         {
-            // TODO: replace with a custom checked exception + Alert dialog
-            // once the exception-handling module of the project is built.
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo iniciar la partida",
+                    "No fue posible abrir la pantalla de juego.", exception);
         }
     }
 

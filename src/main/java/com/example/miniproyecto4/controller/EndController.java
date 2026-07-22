@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import com.example.miniproyecto4.model.PlayerData;
+import com.example.miniproyecto4.view.DialogHelper;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 /**
@@ -99,7 +100,8 @@ public class EndController
         }
         catch (IOException exception)
         {
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo continuar",
+                    "No fue posible abrir la pantalla de colocación de barcos.", exception);
         }
     }
 
@@ -111,7 +113,8 @@ public class EndController
         }
         catch (IOException exception)
         {
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo continuar",
+                    "No fue posible abrir el menú principal.", exception);
         }
     }
 }

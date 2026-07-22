@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import com.example.miniproyecto4.exceptions.PersistenceException;
 import com.example.miniproyecto4.persistence.GameStateSerializer;
 import com.example.miniproyecto4.persistence.SerializableGameState;
+import com.example.miniproyecto4.view.DialogHelper;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 import javafx.application.Platform;
@@ -66,9 +67,8 @@ public class HomeController
         }
         catch (IOException exception)
         {
-            // TODO: replace with a custom checked exception + Alert dialog
-            // once the exception-handling module of the project is built.
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo iniciar",
+                    "No fue posible abrir la pantalla de colocación de barcos.", exception);
         }
     }
 
@@ -88,9 +88,9 @@ public class HomeController
         }
         catch (PersistenceException | IOException exception)
         {
-            // TODO: replace with a custom checked exception + Alert dialog
-            // once the exception-handling module of the project is built.
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo continuar la partida",
+                    "El archivo de guardado (" + SAVE_FILE_PATH + ") no se pudo leer o está dañado.",
+                    exception);
         }
     }
 

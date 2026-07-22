@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import com.example.miniproyecto4.concurrency.GameTimerThread;
 import com.example.miniproyecto4.concurrency.MachineTurnThread;
@@ -31,6 +33,7 @@ import com.example.miniproyecto4.persistence.SerializableGameState;
 import com.example.miniproyecto4.view.BoardCellView;
 import com.example.miniproyecto4.view.BoardInteractionAdapter;
 import com.example.miniproyecto4.view.CellState;
+import com.example.miniproyecto4.view.DialogHelper;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 /**
@@ -108,6 +111,7 @@ public class GameController
     private boolean gameOver;
     private boolean enemyFleetRevealed;
     private boolean paused;
+    private boolean persistenceWarningShown;
 
     public GameController()
     {
@@ -152,14 +156,16 @@ public class GameController
         }
         catch (PlacementException exception)
         {
-            // TODO: show an Alert once the exception-handling module is wired
-            // into this screen too; RandomPlacementStrategy retries heavily,
-            // so in practice this should not happen.
-            exception.printStackTrace();
+            // RandomPlacementStrategy retries heavily, so this should not
+            // normally happen; if it does, the machine has no valid fleet
+            // and the match cannot continue, so the player needs to know.
+            DialogHelper.showError("No se pudo iniciar la partida",
+                    "No fue posible ubicar la flota de la máquina.", exception);
         }
 
         this.infoLabel.setText(this.playerData.getName());
         this.refreshStatsLabels();
+        this.updateViewEnemyButton();
         this.renderFleet(placedBoard, this.playerCellViews);
 
         this.timerThread = new GameTimerThread(this::onTimerTick);
@@ -192,6 +198,7 @@ public class GameController
 
         this.infoLabel.setText(this.playerData.getName());
         this.refreshStatsLabels();
+        this.updateViewEnemyButton();
         this.renderFleet(humanBoard, this.playerCellViews);
         this.restoreShotMarks(humanBoard, this.playerCellViews);
         this.restoreShotMarks(machineBoard, this.enemyCellViews);
@@ -281,6 +288,8 @@ public class GameController
     // the machine is mid-turn.
     private void handlePlayerShot(Coordinate coordinate)
     {
+        boolean invalidShot = false;
+
         synchronized (this.turnLock)
         {
             if (!this.humanTurn || this.gameOver || this.paused)
@@ -319,9 +328,17 @@ public class GameController
             }
             catch (InvalidShotException exception)
             {
-                // TODO: show an Alert - cell already shot or out of range,
-                // once the exception-handling module reaches this screen.
+                // Cell already shot at, or out of range. The Alert itself is
+                // shown after leaving this synchronized block, so a modal
+                // dialog never sits on top of the shared turn lock.
+                invalidShot = true;
             }
+        }
+
+        if (invalidShot)
+        {
+            DialogHelper.showWarning("Disparo inválido",
+                    "Esa celda ya fue disparada antes, o está fuera del tablero. Elige otra.");
         }
     }
 
@@ -441,8 +458,9 @@ public class GameController
         }
         catch (PersistenceException exception)
         {
-            // TODO: show an Alert once the exception-handling module reaches this screen.
-            exception.printStackTrace();
+            DialogHelper.showError("No se pudo guardar el resultado",
+                    "La partida terminó correctamente, pero no se pudo registrar el resultado "
+                            + "en el historial de jugadores (" + PLAYERS_FILE_PATH + ").", exception);
         }
     }
 
@@ -457,7 +475,11 @@ public class GameController
         }
         catch (java.io.IOException exception)
         {
-            exception.printStackTrace();
+            // Not fatal to this match (already over), but if the stale save
+            // survives, "Continuar" on the home screen would try to resume
+            // a match that already ended - worth telling the player.
+            DialogHelper.showError("Aviso de guardado",
+                    "No se pudo eliminar la partida guardada anterior (" + SAVE_FILE_PATH + ").", exception);
         }
     }
 
@@ -477,7 +499,8 @@ public class GameController
             }
             catch (java.io.IOException exception)
             {
-                exception.printStackTrace();
+                DialogHelper.showError("Error al mostrar el resultado",
+                        "La partida terminó, pero no se pudo abrir la pantalla de resultados.", exception);
             }
         });
     }
@@ -549,32 +572,95 @@ public class GameController
     }
 
     // Writes the resumable, serialized snapshot (both boards + stats).
-    // Called automatically after every move (HU-5) and by the manual
-    // "Guardar partida" button.
+    // Called automatically after every move (HU-5); see handleSaveGame()
+    // for the manual "Guardar partida" button, which reports its own
+    // outcome instead of relying on this method's throttled warning.
     private void persistGameState()
     {
         try
         {
-            SerializableGameState state = new SerializableGameState(
-                    this.humanOpponent.getBoard(), this.machineOpponent.getBoard(),
-                    this.playerData, this.humanTurn);
-            this.gameStateSerializer.save(state, SAVE_FILE_PATH);
+            this.writeGameState();
         }
         catch (PersistenceException exception)
         {
-            // TODO: show an Alert once the exception-handling module reaches this screen.
-            exception.printStackTrace();
+            // Runs after every single shot (HU-5), so a modal Alert here
+            // would interrupt every move if the disk write keeps failing.
+            // Warn the player once per match instead of once per shot; the
+            // game itself keeps working from memory either way.
+            if (!this.persistenceWarningShown)
+            {
+                this.persistenceWarningShown = true;
+                DialogHelper.showError("Guardado automático interrumpido",
+                        "No se pudo guardar el progreso de la partida en disco ("
+                                + SAVE_FILE_PATH + "). El juego continuará, pero si lo cierras "
+                                + "ahora podrías perder el avance no guardado.", exception);
+            }
         }
+    }
+
+    private void writeGameState() throws PersistenceException
+    {
+        SerializableGameState state = new SerializableGameState(
+                this.humanOpponent.getBoard(), this.machineOpponent.getBoard(),
+                this.playerData, this.humanTurn);
+        this.gameStateSerializer.save(state, SAVE_FILE_PATH);
     }
 
     private void handleSaveGame()
     {
-        this.persistGameState();
+        try
+        {
+            this.writeGameState();
+            DialogHelper.showInfo("Partida guardada", "El progreso se guardó correctamente.");
+        }
+        catch (PersistenceException exception)
+        {
+            DialogHelper.showError("No se pudo guardar",
+                    "No fue posible guardar la partida en disco (" + SAVE_FILE_PATH + ").", exception);
+        }
     }
+
+    // HU-3: the reveal is a paid, time-boxed verification tool, not a free
+    // toggle. Each click costs one use (max MAX_ENEMY_BOARD_VIEWS per match,
+    // enforced by PlayerData) and one penalty miss, then auto-hides itself
+    // after ENEMY_VIEW_DURATION so it cannot be left on as a permanent
+    // cheat during normal play.
+    private static final Duration ENEMY_VIEW_DURATION = Duration.seconds(3);
 
     private void handleViewEnemy()
     {
-        this.enemyFleetRevealed = !this.enemyFleetRevealed;
+        if (this.gameOver || this.paused || this.enemyFleetRevealed
+                || !this.playerData.canViewEnemyBoard())
+        {
+            return;
+        }
+
+        this.playerData.registerEnemyBoardView();
+        this.refreshStatsLabels();
+        this.persistGameState();
+
+        this.enemyFleetRevealed = true;
+        this.paintEnemyFleet(CellState.SHIP);
+        this.updateViewEnemyButton();
+
+        PauseTransition revealWindow = new PauseTransition(ENEMY_VIEW_DURATION);
+        revealWindow.setOnFinished(event -> this.hideEnemyFleet());
+        revealWindow.play();
+    }
+
+    // Called automatically once ENEMY_VIEW_DURATION elapses.
+    private void hideEnemyFleet()
+    {
+        this.enemyFleetRevealed = false;
+        this.paintEnemyFleet(CellState.WATER);
+        this.updateViewEnemyButton();
+    }
+
+    // Shared by handleViewEnemy/hideEnemyFleet: paints every not-yet-resolved
+    // enemy ship segment as either SHIP (reveal) or WATER (hide again),
+    // leaving cells the player already hit/sunk for real untouched.
+    private void paintEnemyFleet(CellState stateToApply)
+    {
         for (Ship ship : this.machineOpponent.getFleet())
         {
             List<Coordinate> cells = ship.getCells();
@@ -590,9 +676,18 @@ public class GameController
                 }
 
                 cellView.setShipSegmentInfo(ship.getSize(), index, ship.getOrientation());
-                cellView.setState(this.enemyFleetRevealed ? CellState.SHIP : CellState.WATER);
+                cellView.setState(stateToApply);
             }
         }
+    }
+
+    // Reflects the remaining uses on the button label, and disables it once
+    // the limit is reached or while a reveal is currently in progress.
+    private void updateViewEnemyButton()
+    {
+        int remaining = this.playerData.getRemainingEnemyBoardViews();
+        this.viewEnemyBtn.setText("Ver tablero enemigo (" + remaining + ")");
+        this.viewEnemyBtn.setDisable(remaining <= 0 || this.enemyFleetRevealed);
     }
 
     private void handleExit()
