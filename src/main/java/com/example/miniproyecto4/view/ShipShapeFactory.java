@@ -24,6 +24,7 @@ import javafx.scene.shape.Rectangle;
  * agregar un caso nuevo, sin tocar el resto del código de la UI.</p>
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public final class ShipShapeFactory
 {

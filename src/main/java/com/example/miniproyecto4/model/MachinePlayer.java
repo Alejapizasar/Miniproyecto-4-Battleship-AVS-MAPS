@@ -33,6 +33,22 @@ public class MachinePlayer implements Opponent
     }
 
     /**
+     * Rebuilds a machine opponent from an already-placed board and fleet
+     * (as restored from a saved game), skipping random placement entirely
+     * since the ships are already positioned.
+     *
+     * @param board the machine's board, already populated with its fleet
+     * @param fleet the same ships already placed on that board
+     */
+    public MachinePlayer(Board board, List<Ship> fleet)
+    {
+        this.board = board;
+        this.fleet = fleet;
+        this.placementStrategy = new RandomPlacementStrategy();
+        this.shotStrategy = new RandomShotStrategy();
+    }
+
+    /**
      * Places every ship of the machine's fleet at a random valid spot.
      * Call this once, right after construction.
      *

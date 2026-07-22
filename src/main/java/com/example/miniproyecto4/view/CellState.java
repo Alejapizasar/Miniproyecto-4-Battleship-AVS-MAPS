@@ -5,6 +5,7 @@ package com.example.miniproyecto4.view;
  * Used by {@link BoardCellView} to decide which 2D graphic to render.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public enum CellState
 {

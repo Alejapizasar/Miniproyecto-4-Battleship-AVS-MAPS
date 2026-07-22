@@ -21,12 +21,19 @@ public class SerializableGameState implements Serializable
     private final Board humanBoard;
     private final Board machineBoard;
     private final PlayerData playerData;
+    private final boolean humanTurn;
 
-    public SerializableGameState(Board humanBoard, Board machineBoard, PlayerData playerData)
+    public SerializableGameState(Board humanBoard, Board machineBoard, PlayerData playerData, boolean humanTurn)
     {
         this.humanBoard = humanBoard;
         this.machineBoard = machineBoard;
         this.playerData = playerData;
+        this.humanTurn = humanTurn;
+    }
+
+    public boolean isHumanTurn()
+    {
+        return this.humanTurn;
     }
 
     public Board getHumanBoard()

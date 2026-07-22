@@ -107,6 +107,7 @@ public class GameController
     private boolean humanTurn;
     private boolean gameOver;
     private boolean enemyFleetRevealed;
+    private boolean paused;
 
     public GameController()
     {
@@ -170,6 +171,62 @@ public class GameController
         return this.playerData;
     }
 
+    /**
+     * Injected by {@link HomeController} instead of {@link #initializePlayerData}
+     * when the player chose "Continuar" on the home screen. Rebuilds both
+     * opponents from the serialized boards (fleets, hits and misses
+     * included) and repaints both grids to match exactly where the match
+     * was left off, instead of starting a fresh one.
+     *
+     * @param state the snapshot loaded by {@link com.example.miniproyecto4.persistence.GameStateSerializer}
+     */
+    public void resumeGame(com.example.miniproyecto4.persistence.SerializableGameState state)
+    {
+        Board humanBoard = state.getHumanBoard();
+        Board machineBoard = state.getMachineBoard();
+
+        this.playerData = state.getPlayerData();
+        this.humanOpponent = new HumanPlayer(humanBoard, humanBoard.getPlacedShips());
+        this.machineOpponent = new MachinePlayer(machineBoard, machineBoard.getPlacedShips());
+        this.humanTurn = state.isHumanTurn();
+
+        this.infoLabel.setText(this.playerData.getName());
+        this.refreshStatsLabels();
+        this.renderFleet(humanBoard, this.playerCellViews);
+        this.restoreShotMarks(humanBoard, this.playerCellViews);
+        this.restoreShotMarks(machineBoard, this.enemyCellViews);
+
+        this.timerThread = new GameTimerThread(this::onTimerTick);
+        this.timerThread.start();
+
+        if (!this.humanTurn)
+        {
+            this.startMachineTurn();
+        }
+    }
+
+    // Repaints every already-fired-at cell on a restored board: MISS if
+    // nothing was there, HIT/SUNK depending on whether the ship that owned
+    // that cell ended up fully hit. Reuses applyShotResult so the visuals
+    // match exactly what a live shot would have produced.
+    private void restoreShotMarks(Board board, Map<Coordinate, BoardCellView> cellViews)
+    {
+        for (Coordinate coordinate : board.getShotCells())
+        {
+            Ship ship = board.getShipAt(coordinate);
+            ShotResult result;
+            if (ship == null)
+            {
+                result = ShotResult.MISS;
+            }
+            else
+            {
+                result = ship.isSunk() ? ShotResult.SUNK : ShotResult.HIT;
+            }
+            this.applyShotResult(board, cellViews, coordinate, result);
+        }
+    }
+
     // ---------- Grid setup ----------
 
     // Builds a blank SIZE x SIZE grid of water cells, offset by the header
@@ -226,7 +283,7 @@ public class GameController
     {
         synchronized (this.turnLock)
         {
-            if (!this.humanTurn || this.gameOver)
+            if (!this.humanTurn || this.gameOver || this.paused)
             {
                 return;
             }
@@ -242,14 +299,23 @@ public class GameController
                 if (this.machineOpponent.hasLost())
                 {
                     this.handleVictory();
+                    return;
                 }
-                else if (result == ShotResult.MISS)
+
+                if (result == ShotResult.MISS)
                 {
                     this.humanTurn = false;
-                    this.startMachineTurn();
                 }
                 // On HIT/SUNK without finishing the fleet, the human simply
                 // shoots again: humanTurn stays true, nothing else to do.
+
+                // HU-5: persist after every single move, not just on manual save.
+                this.persistGameState();
+
+                if (!this.humanTurn)
+                {
+                    this.startMachineTurn();
+                }
             }
             catch (InvalidShotException exception)
             {
@@ -283,9 +349,12 @@ public class GameController
             {
                 this.humanTurn = true;
             }
+            // HU-5: persist after every single move, not just on manual save.
+            this.persistGameState();
         }
         else
         {
+            this.persistGameState();
             // Machine hit or sunk a ship without finishing the human fleet:
             // it keeps shooting, one new thread per shot.
             this.startMachineTurn();
@@ -345,6 +414,8 @@ public class GameController
         this.gameOver = true;
         this.stopTimer();
         this.infoLabel.setText(this.playerData.getName() + " - Victoria");
+        this.recordMatchResult();
+        this.deleteSavedGame();
         this.navigateToEndScreen(true);
     }
 
@@ -353,7 +424,41 @@ public class GameController
         this.gameOver = true;
         this.stopTimer();
         this.infoLabel.setText(this.playerData.getName() + " - Derrota");
+        this.recordMatchResult();
+        this.deleteSavedGame();
         this.navigateToEndScreen(false);
+    }
+
+    // Appends this match's final result (nickname + ships sunk) to the flat
+    // player-history file. Called once, when the match actually ends -
+    // NOT on every move, so players.txt stays one line per match.
+    private void recordMatchResult()
+    {
+        try
+        {
+            FlatFilePlayerRepository repository = new FlatFilePlayerRepository(PLAYERS_FILE_PATH);
+            repository.save(this.playerData);
+        }
+        catch (PersistenceException exception)
+        {
+            // TODO: show an Alert once the exception-handling module reaches this screen.
+            exception.printStackTrace();
+        }
+    }
+
+    // A finished match has nothing left to resume, so its serialized save
+    // is removed; otherwise "Continuar" on the home screen would try to
+    // reload a game that already ended.
+    private void deleteSavedGame()
+    {
+        try
+        {
+            java.nio.file.Files.deleteIfExists(SAVE_FILE_PATH);
+        }
+        catch (java.io.IOException exception)
+        {
+            exception.printStackTrace();
+        }
     }
 
     private void navigateToEndScreen(boolean victory)
@@ -416,26 +521,55 @@ public class GameController
 
     private void handlePause()
     {
-        // TODO: pause/resume the timer thread's display and block shots
-        // once a dedicated "paused" overlay is designed for this screen.
+        if (this.gameOver)
+        {
+            return;
+        }
+
+        this.paused = !this.paused;
+
+        if (this.paused)
+        {
+            if (this.timerThread != null)
+            {
+                this.timerThread.pauseTimer();
+            }
+            this.pauseBtn.setText("Reanudar");
+            this.infoLabel.setText("PAUSADO");
+        }
+        else
+        {
+            if (this.timerThread != null)
+            {
+                this.timerThread.resumeTimer();
+            }
+            this.pauseBtn.setText("Pausa");
+            this.infoLabel.setText(this.playerData.getName());
+        }
     }
 
-    private void handleSaveGame()
+    // Writes the resumable, serialized snapshot (both boards + stats).
+    // Called automatically after every move (HU-5) and by the manual
+    // "Guardar partida" button.
+    private void persistGameState()
     {
         try
         {
             SerializableGameState state = new SerializableGameState(
-                    this.humanOpponent.getBoard(), this.machineOpponent.getBoard(), this.playerData);
+                    this.humanOpponent.getBoard(), this.machineOpponent.getBoard(),
+                    this.playerData, this.humanTurn);
             this.gameStateSerializer.save(state, SAVE_FILE_PATH);
-
-            FlatFilePlayerRepository repository = new FlatFilePlayerRepository(PLAYERS_FILE_PATH);
-            repository.save(this.playerData);
         }
         catch (PersistenceException exception)
         {
             // TODO: show an Alert once the exception-handling module reaches this screen.
             exception.printStackTrace();
         }
+    }
+
+    private void handleSaveGame()
+    {
+        this.persistGameState();
     }
 
     private void handleViewEnemy()

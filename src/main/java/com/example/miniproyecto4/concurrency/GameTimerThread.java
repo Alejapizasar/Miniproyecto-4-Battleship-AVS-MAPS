@@ -18,11 +18,13 @@ public class GameTimerThread extends Thread
 {
     private final LongConsumer onTick;
     private volatile boolean running;
+    private volatile boolean paused;
 
     public GameTimerThread(LongConsumer onTick)
     {
         this.onTick = onTick;
         this.running = true;
+        this.paused = false;
         this.setDaemon(true);
         this.setName("game-timer-thread");
     }
@@ -43,10 +45,30 @@ public class GameTimerThread extends Thread
                 return;
             }
 
+            if (this.paused)
+            {
+                // Skip this tick entirely: no increment, no report, so the
+                // displayed clock genuinely stops instead of just freezing
+                // its label while still counting underneath.
+                continue;
+            }
+
             elapsedSeconds++;
             long secondsToReport = elapsedSeconds;
             Platform.runLater(() -> this.onTick.accept(secondsToReport));
         }
+    }
+
+    /** Freezes the clock (no more ticks reported) until {@link #resumeTimer()}. */
+    public void pauseTimer()
+    {
+        this.paused = true;
+    }
+
+    /** Resumes reporting ticks after a {@link #pauseTimer()} call. */
+    public void resumeTimer()
+    {
+        this.paused = false;
     }
 
     /**

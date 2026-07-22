@@ -9,6 +9,7 @@ import com.example.miniproyecto4.model.Coordinate;
  * need instead of implementing all three methods every time.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public abstract class BoardInteractionAdapter implements BoardInteractionListener
 {

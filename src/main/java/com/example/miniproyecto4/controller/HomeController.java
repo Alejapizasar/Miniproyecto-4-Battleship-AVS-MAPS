@@ -1,7 +1,12 @@
 package com.example.miniproyecto4.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import com.example.miniproyecto4.exceptions.PersistenceException;
+import com.example.miniproyecto4.persistence.GameStateSerializer;
+import com.example.miniproyecto4.persistence.SerializableGameState;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 import javafx.application.Platform;
@@ -18,6 +23,10 @@ import javafx.scene.control.Button;
 public class HomeController
 {
     private static final String PLAYER_VIEW_FXML = "/com/example/miniproyecto4/Views/PlayerView.fxml";
+    private static final String GAME_VIEW_FXML = "/com/example/miniproyecto4/Views/GameView.fxml";
+
+    // Must match the path GameController writes to in persistGameState().
+    private static final Path SAVE_FILE_PATH = Path.of("battleship_save.dat");
 
     @FXML
     private Button startBtn;
@@ -29,10 +38,12 @@ public class HomeController
     private Button quitBtn;
 
     private final SceneNavigator sceneNavigator;
+    private final GameStateSerializer gameStateSerializer;
 
     public HomeController()
     {
         this.sceneNavigator = new SceneNavigator();
+        this.gameStateSerializer = new GameStateSerializer();
     }
 
     @FXML
@@ -41,6 +52,10 @@ public class HomeController
         this.startBtn.setOnAction(event -> this.handleStartNewGame());
         this.continueBtn.setOnAction(event -> this.handleContinueGame());
         this.quitBtn.setOnAction(event -> this.handleQuit());
+
+        // Nothing to resume if no save file exists yet: disable the button
+        // instead of letting the player click into an error.
+        this.continueBtn.setDisable(Files.notExists(SAVE_FILE_PATH));
     }
 
     private void handleStartNewGame()
@@ -59,7 +74,24 @@ public class HomeController
 
     private void handleContinueGame()
     {
-        // TODO: load a saved game from the serialized file (persistence module).
+        try
+        {
+            SerializableGameState state = this.gameStateSerializer.load(SAVE_FILE_PATH);
+
+            Object destinationController = this.sceneNavigator.navigateToAndGetController(
+                    this.continueBtn, GAME_VIEW_FXML, "Battleship - Partida guardada");
+
+            if (destinationController instanceof GameController gameController)
+            {
+                gameController.resumeGame(state);
+            }
+        }
+        catch (PersistenceException | IOException exception)
+        {
+            // TODO: replace with a custom checked exception + Alert dialog
+            // once the exception-handling module of the project is built.
+            exception.printStackTrace();
+        }
     }
 
     private void handleQuit()

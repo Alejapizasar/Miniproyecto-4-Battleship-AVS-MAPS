@@ -4,7 +4,8 @@ package com.example.miniproyecto4.exceptions;
  * Checked exception thrown whenever a ship cannot be placed on the board:
  * out of bounds, overlapping another ship, or no valid random spot found.
  *
- * @author Alejandro Valencia Sandoval
+ * @author Alejandro Valencia
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class PlacementException extends Exception
 {

@@ -26,6 +26,7 @@ import javafx.scene.shape.StrokeLineCap;
  * once, right before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class BoardCellView extends StackPane
 {

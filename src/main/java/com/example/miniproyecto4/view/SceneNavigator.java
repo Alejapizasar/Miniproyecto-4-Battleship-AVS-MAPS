@@ -17,6 +17,7 @@ import javafx.stage.Stage;
  * creates its own instance) so it does not become a Singleton.</p>
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class SceneNavigator
 {

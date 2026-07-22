@@ -9,6 +9,7 @@ import com.example.miniproyecto4.model.Coordinate;
  * override the one or two events they actually care about.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public interface BoardInteractionListener
 {
