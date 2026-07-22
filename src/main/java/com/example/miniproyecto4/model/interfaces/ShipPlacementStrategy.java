@@ -13,6 +13,7 @@ import com.example.miniproyecto4.model.Ship;
  * player; RandomPlacementStrategy computes its own and ignores them.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public interface ShipPlacementStrategy
 {

@@ -39,6 +39,7 @@ import com.example.miniproyecto4.view.SceneNavigator;
  * typing the name simply moves focus to the board instead of typing.</p>
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class PlayerController
 {

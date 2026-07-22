@@ -1,0 +1,5 @@
+# nickname;shipsSunk
+aleja;0
+aleja;0
+aleja;0
+aleja;0

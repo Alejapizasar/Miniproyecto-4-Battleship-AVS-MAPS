@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
  * screen: starting a new game, continuing a saved one, or quitting.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class HomeController
 {

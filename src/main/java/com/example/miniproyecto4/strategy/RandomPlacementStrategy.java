@@ -14,6 +14,7 @@ import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
  * random valid spot for the ship, retrying a bounded number of times.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class RandomPlacementStrategy implements ShipPlacementStrategy
 {

@@ -244,7 +244,7 @@
                         <Font name="Courier New" size="12.0" />
                      </font>
                   </Label>
-                  <Button fx:id="rotateShipBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Rotar Barco" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="rotateShipBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="48.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Rotar Barco" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="12.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
@@ -256,10 +256,10 @@
                         </ImageView>
                      </graphic>
                      <font>
-                        <Font name="Courier New" size="11.0" />
+                        <Font name="Courier New" size="10.0" />
                      </font>
                   </Button>
-                  <Button fx:id="clearBoardBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="97.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Limpiar Tablero" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="clearBoardBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="54.0" prefWidth="97.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Limpiar Tablero" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
@@ -271,10 +271,10 @@
                         </ImageView>
                      </graphic>
                      <font>
-                        <Font name="Courier New Bold" size="11.0" />
+                        <Font name="Courier New Bold" size="10.0" />
                      </font>
                   </Button>
-                  <Button fx:id="randomPositionBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="49.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Posicion Aleatoria" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="randomPositionBtn" alignment="CENTER" mnemonicParsing="false" prefHeight="59.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Posicion Aleatoria" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 15;">
                            <image>
@@ -286,7 +286,7 @@
                         </ImageView>
                      </graphic>
                      <font>
-                        <Font name="Courier New" size="7.0" />
+                        <Font name="Courier New" size="9.0" />
                      </font>
                   </Button>
                   <Button fx:id="playBtn" mnemonicParsing="false" prefHeight="32.0" prefWidth="96.0" style="-fx-background-color: #0E4338; -fx-border-color: #8B7043; -fx-border-width: 1; -fx-border-radius: 2;" text="Jugar" textAlignment="CENTER" textFill="WHITE" wrapText="true">

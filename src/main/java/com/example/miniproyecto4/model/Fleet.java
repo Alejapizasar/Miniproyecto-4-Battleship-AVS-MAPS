@@ -9,6 +9,7 @@ import java.util.List;
  * on the ImageView fx:id names already in PlayerView.fxml).
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public final class Fleet
 {

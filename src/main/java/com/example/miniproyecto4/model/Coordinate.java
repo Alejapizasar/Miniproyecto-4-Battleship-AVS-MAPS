@@ -1,15 +1,21 @@
 package com.example.miniproyecto4.model;
+
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Immutable pair of (row, column) identifying a single cell on a 10x10
  * board. Used as a Map key throughout the project, so equals/hashCode
- * are based on value, not identity.
+ * are based on value, not identity. Serializable so it can be stored
+ * inside a {@link Board} snapshot when saving a game.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
-public final class Coordinate
+public final class Coordinate implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     private final int row;
     private final int column;
 

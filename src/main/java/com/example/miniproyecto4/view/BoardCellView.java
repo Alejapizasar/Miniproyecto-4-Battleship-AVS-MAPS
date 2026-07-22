@@ -3,7 +3,6 @@ package com.example.miniproyecto4.view;
 import com.example.miniproyecto4.model.Orientation;
 
 import javafx.geometry.Pos;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -23,13 +22,8 @@ import javafx.scene.shape.StrokeLineCap;
  *
  * <p>When a cell holds part of a ship, the actual hull graphic is delegated
  * to {@link ShipShapeFactory} so the bow/stern/mid-section look different
- * from each other instead of every cell showing the same generic block.
- * Call {@link #setShipSegmentInfo(int, int, Orientation)} once, right after
- * placement, before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
- *
- * <p>{@link #setKeyboardFocused(boolean)} draws a border highlight so
- * arrow-key navigation has a visible cursor, independent from the cell's
- * logical {@link CellState}.</p>
+ * from each other. Call {@link #setShipSegmentInfo(int, int, Orientation)}
+ * once, right before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
  *
  * @author Alejandro Valencia Sandoval
  */
@@ -41,20 +35,14 @@ public class BoardCellView extends StackPane
     private static final Color WATER_LIGHT = Color.web("#2E7DAF");
     private static final Color MISS_MARK = Color.web("#D9E6EF");
     private static final Color SUNK_OVERLAY = Color.web("#1A1A1A");
-    private static final Color CURSOR_HIGHLIGHT = Color.web("#F2C14E");
 
     private CellState state;
 
-    // Info del barco al que pertenece esta casilla (para elegir la figura
-    // correcta: proa, popa o cuerpo central). Solo es relevante cuando
-    // state es SHIP, HIT o SUNK.
+    // Info about the ship this cell belongs to (which segment: bow, mid,
+    // stern), only relevant when state is SHIP, HIT or SUNK.
     private int shipSize = 1;
     private int segmentIndex = 0;
     private Orientation orientation = Orientation.HORIZONTAL;
-
-    // Cursor de teclado: no cambia el estado logico de la celda, solo
-    // dibuja un borde encima para indicar donde caeria SPACE.
-    private boolean keyboardFocused = false;
 
     public BoardCellView()
     {
@@ -67,13 +55,9 @@ public class BoardCellView extends StackPane
     }
 
     /**
-     * Registra a qué barco pertenece esta casilla, para que el segmento
-     * dibujado (proa / cuerpo / popa) sea el correcto. Debe llamarse antes
-     * de {@link #setState(CellState)} cuando el nuevo estado sea SHIP.
-     *
-     * @param shipSize     tamaño total del barco (1 a 4)
-     * @param segmentIndex posición de esta casilla dentro del barco (0-based)
-     * @param orientation  orientación con la que quedó colocado el barco
+     * Registers which ship this cell belongs to, so the correct segment
+     * shape (bow / body / stern) gets drawn. Call before {@link #setState}
+     * when the new state is SHIP, HIT or SUNK.
      */
     public void setShipSegmentInfo(int shipSize, int segmentIndex, Orientation orientation)
     {
@@ -82,11 +66,6 @@ public class BoardCellView extends StackPane
         this.orientation = orientation;
     }
 
-    /**
-     * Updates the logical state of the cell and redraws its graphic.
-     *
-     * @param newState the new state to represent visually
-     */
     public void setState(CellState newState)
     {
         this.state = newState;
@@ -99,15 +78,24 @@ public class BoardCellView extends StackPane
     }
 
     /**
-     * Toggles the keyboard-cursor highlight border on this cell, used by
-     * arrow-key navigation. Purely visual, does not affect {@link #getState()}.
+     * Toggles the CSS class used to highlight this cell as the current
+     * keyboard-navigation cursor during manual ship placement.
      *
-     * @param focused true to draw the highlight border, false to remove it
+     * @param focused true to show the highlight, false to clear it
      */
     public void setKeyboardFocused(boolean focused)
     {
-        this.keyboardFocused = focused;
-        this.render();
+        if (focused)
+        {
+            if (!this.getStyleClass().contains("cell-cursor"))
+            {
+                this.getStyleClass().add("cell-cursor");
+            }
+        }
+        else
+        {
+            this.getStyleClass().remove("cell-cursor");
+        }
     }
 
     // Clears the current children and rebuilds the shapes for the current state.
@@ -140,14 +128,8 @@ public class BoardCellView extends StackPane
             default:
                 break;
         }
-
-        if (this.keyboardFocused)
-        {
-            this.getChildren().add(this.buildCursorHighlight());
-        }
     }
 
-    // Base tile: a soft blue gradient plus two faint wave lines for texture.
     private StackPane buildWater()
     {
         StackPane layer = new StackPane();
@@ -158,14 +140,12 @@ public class BoardCellView extends StackPane
                 new Stop(0, WATER_LIGHT),
                 new Stop(1, WATER_DARK)));
 
-        Polyline waveOne = new Polyline(
-                4, 10, 10, 14, 16, 10, 22, 14, 28, 10);
+        Polyline waveOne = new Polyline(4, 10, 10, 14, 16, 10, 22, 14, 28, 10);
         waveOne.setStroke(Color.web("#8FD0F0", 0.35));
         waveOne.setStrokeWidth(1.2);
         waveOne.setFill(null);
 
-        Polyline waveTwo = new Polyline(
-                4, 20, 10, 24, 16, 20, 22, 24, 28, 20);
+        Polyline waveTwo = new Polyline(4, 20, 10, 24, 16, 20, 22, 24, 28, 20);
         waveTwo.setStroke(Color.web("#8FD0F0", 0.25));
         waveTwo.setStrokeWidth(1.2);
         waveTwo.setFill(null);
@@ -174,13 +154,11 @@ public class BoardCellView extends StackPane
         return layer;
     }
 
-    // Delegates the actual hull drawing to ShipShapeFactory so bow/mid/stern differ.
     private javafx.scene.Group buildShipSegment()
     {
         return ShipShapeFactory.buildSegment(this.shipSize, this.segmentIndex, this.orientation);
     }
 
-    // "Agua": an X mark over the water, per the assignment's own notation.
     private javafx.scene.Group buildMissMark()
     {
         Line lineA = new Line(-8, -8, 8, 8);
@@ -194,7 +172,6 @@ public class BoardCellView extends StackPane
         return new javafx.scene.Group(lineA, lineB);
     }
 
-    // "Tocado": a small fiery burst drawn from layered circles.
     private javafx.scene.Group buildHitBurst()
     {
         Circle outer = new Circle(9);
@@ -210,7 +187,6 @@ public class BoardCellView extends StackPane
         return new javafx.scene.Group(outer, core);
     }
 
-    // "Hundido": darkens the whole hull and marks it with a bold red X.
     private javafx.scene.Group buildSunkOverlay()
     {
         Rectangle darken = new Rectangle(CELL_SIZE, CELL_SIZE);
@@ -227,18 +203,5 @@ public class BoardCellView extends StackPane
         }
 
         return new javafx.scene.Group(darken, lineA, lineB);
-    }
-
-    // Simple border rectangle drawn on top of everything to mark the
-    // cell the keyboard cursor currently sits on.
-    private Rectangle buildCursorHighlight()
-    {
-        Rectangle highlight = new Rectangle(CELL_SIZE - 2, CELL_SIZE - 2);
-        highlight.setFill(Color.TRANSPARENT);
-        highlight.setStroke(CURSOR_HIGHLIGHT);
-        highlight.setStrokeWidth(2.5);
-        highlight.setArcWidth(4);
-        highlight.setArcHeight(4);
-        return highlight;
     }
 }

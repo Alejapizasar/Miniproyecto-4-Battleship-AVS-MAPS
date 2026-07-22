@@ -12,6 +12,7 @@ import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
  * currently selected in the UI (toggled via the "Rotar Barco" button).
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class ManualPlacementStrategy implements ShipPlacementStrategy
 {

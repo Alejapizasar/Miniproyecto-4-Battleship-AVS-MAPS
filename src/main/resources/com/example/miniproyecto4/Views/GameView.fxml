@@ -14,14 +14,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #151B2E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.miniproyecto4.controller.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="980.0" style="-fx-background-color: #151B2E;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.miniproyecto4.controller.GameController">
    <children>
-      <ImageView fitHeight="409.0" fitWidth="612.0" layoutX="-4.0" layoutY="-2.0" pickOnBounds="true">
+      <ImageView fitHeight="489.0" fitWidth="992.0" layoutX="-4.0" layoutY="-2.0" pickOnBounds="true">
          <image>
             <Image url="@../Imagenes/battleScreen.jpg" />
          </image>
       </ImageView>
-      <BorderPane layoutX="9.0" layoutY="8.0" prefHeight="385.0" prefWidth="582.0">
+      <BorderPane AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="8.0">
          <bottom>
             <HBox alignment="CENTER" prefHeight="82.0" prefWidth="582.0" spacing="16" style="-fx-background-color: #151B2E;">
                <padding>
@@ -30,7 +30,7 @@
                <children>
                   <Button fx:id="saveGameBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="143.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Guardar partida" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/save.png" />
                            </image>
@@ -42,7 +42,7 @@
                   </Button>
                   <Button fx:id="viewEnemyBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="194.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Ver tablero enemigo" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/eye.png" />
                            </image>
@@ -54,7 +54,7 @@
                   </Button>
                   <Button fx:id="pauseBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Pausa" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/pause.png" />
                            </image>
@@ -66,7 +66,7 @@
                   </Button>
                   <Button fx:id="exitBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
                            <image>
                               <Image url="@../Iconos/exit.png" />
                            </image>
@@ -92,7 +92,7 @@
                               <Font name="Courier New Bold" size="14.0" />
                            </font>
                         </Label>
-                        <GridPane fx:id="gridUser" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                        <GridPane fx:id="gridUser" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="400.0" prefWidth="400.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
                            <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -741,7 +741,7 @@
                               <Font name="Courier New" size="14.0" />
                            </font>
                         </Label>
-                        <GridPane fx:id="girdIa" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="227.0" prefWidth="367.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                        <GridPane fx:id="girdIa" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="400.0" prefWidth="400.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
                            <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -1394,12 +1394,15 @@
             </Label>
          </top>
          <right>
-            <VBox alignment="TOP_CENTER" prefHeight="274.0" prefWidth="130.0" spacing="10.0" style="-fx-background-color: #151B2E; -fx-border-radius: 5; -fx-border-color: #151B2E;" BorderPane.alignment="CENTER">
+            <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="130.0" spacing="10.0" style="-fx-background-color: #151B2E; -fx-border-radius: 5; -fx-border-color: #151B2E;" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                      <image>
                         <Image url="@../Iconos/timon.png" />
                      </image>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
                   </ImageView>
                   <Label fx:id="infoLabel" alignment="CENTER" prefHeight="50.0" prefWidth="128.0" text="INFORMACION DE LA PARTIDA" textAlignment="CENTER" textFill="#8b7043" wrapText="true">
                      <font>
@@ -1465,7 +1468,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <ImageView fx:id="attack" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
+                  <ImageView fx:id="attack" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 40;">
                      <image>
                         <Image url="@../Iconos/timon.png" />
                      </image>

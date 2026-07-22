@@ -1,5 +1,6 @@
 package com.example.miniproyecto4.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,11 +9,16 @@ import java.util.Set;
 /**
  * A single ship of the fleet. Knows its own cells once placed and tracks
  * which of those cells have been hit, so it can report whether it is sunk.
+ * Serializable so a whole {@link Board} (and therefore a whole match) can
+ * be snapshotted to disk.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
-public class Ship
+public class Ship implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     private final String name;
     private final int size;
     private final List<Coordinate> cells;
