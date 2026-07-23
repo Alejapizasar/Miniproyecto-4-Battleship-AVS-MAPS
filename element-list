@@ -1,0 +1,10 @@
+module:com.example.demo
+com.example.miniproyecto4
+com.example.miniproyecto4.concurrency
+com.example.miniproyecto4.controller
+com.example.miniproyecto4.exceptions
+com.example.miniproyecto4.model
+com.example.miniproyecto4.model.interfaces
+com.example.miniproyecto4.persistence
+com.example.miniproyecto4.strategy
+com.example.miniproyecto4.view
