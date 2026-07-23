@@ -6,3 +6,4 @@ aleja;0
 alejandra ;10
 Vanessa;10
 Jugador;10
+Alejandra;10

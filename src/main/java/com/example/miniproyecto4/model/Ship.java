@@ -27,6 +27,11 @@ public class Ship implements Serializable
 
     public Ship(String name, int size)
     {
+        if (size <= 0)
+        {
+            throw new com.example.miniproyecto4.exceptions.InvalidShipSizeException(
+                    "Ship \"" + name + "\" must have a positive size, got " + size);
+        }
         this.name = name;
         this.size = size;
         this.cells = new LinkedList<>();

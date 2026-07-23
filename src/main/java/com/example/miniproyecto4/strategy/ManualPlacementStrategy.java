@@ -1,9 +1,9 @@
 package com.example.miniproyecto4.strategy;
 
+import com.example.miniproyecto4.exceptions.PlacementException;
 import com.example.miniproyecto4.model.Board;
 import com.example.miniproyecto4.model.Coordinate;
 import com.example.miniproyecto4.model.Orientation;
-import com.example.miniproyecto4.exceptions.PlacementException;
 import com.example.miniproyecto4.model.Ship;
 import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
 

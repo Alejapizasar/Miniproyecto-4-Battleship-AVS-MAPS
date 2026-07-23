@@ -5,14 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 
 import com.example.miniproyecto4.concurrency.GameTimerThread;
 import com.example.miniproyecto4.concurrency.MachineTurnThread;
@@ -51,14 +53,11 @@ import com.example.miniproyecto4.view.SceneNavigator;
  */
 public class GameController
 {
-    private static final Path SAVE_FILE_PATH = Path.of("battleship_save.dat");
-    private static final Path PLAYERS_FILE_PATH = Path.of("players.txt");
+    private static final Path SAVE_FILE_PATH = com.example.miniproyecto4.persistence.SaveLocation.GAME_STATE_FILE;
+    private static final Path PLAYERS_FILE_PATH = com.example.miniproyecto4.persistence.SaveLocation.PLAYERS_FILE;
 
     @FXML
     private Button saveGameBtn;
-
-    @FXML
-    private Button viewEnemyBtn;
 
     @FXML
     private Button pauseBtn;
@@ -109,7 +108,10 @@ public class GameController
 
     private boolean humanTurn;
     private boolean gameOver;
-    private boolean enemyFleetRevealed;
+    // HU-3: plain, unlimited, no-cost toggle meant purely for the professor
+    // to verify the machine's fleet placement (Ctrl+Shift+V), never
+    // reachable from any visible button and never for normal gameplay.
+    private boolean verificationModeActive;
     private boolean paused;
     private boolean persistenceWarningShown;
 
@@ -132,7 +134,17 @@ public class GameController
         this.exitBtn.setOnAction(event -> this.handleExit());
         this.pauseBtn.setOnAction(event -> this.handlePause());
         this.saveGameBtn.setOnAction(event -> this.handleSaveGame());
-        this.viewEnemyBtn.setOnAction(event -> this.handleViewEnemy());
+
+        // HU-3 professor-only shortcut: attached as soon as the Scene
+        // actually exists (not yet during initialize()), same pattern
+        // PlayerController uses for its keyboard shortcuts.
+        this.gridUser.sceneProperty().addListener((observable, oldScene, newScene) ->
+        {
+            if (newScene != null)
+            {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
+            }
+        });
     }
 
     /**
@@ -165,7 +177,6 @@ public class GameController
 
         this.infoLabel.setText(this.playerData.getName());
         this.refreshStatsLabels();
-        this.updateViewEnemyButton();
         this.renderFleet(placedBoard, this.playerCellViews);
 
         this.timerThread = new GameTimerThread(this::onTimerTick);
@@ -198,7 +209,6 @@ public class GameController
 
         this.infoLabel.setText(this.playerData.getName());
         this.refreshStatsLabels();
-        this.updateViewEnemyButton();
         this.renderFleet(humanBoard, this.playerCellViews);
         this.restoreShotMarks(humanBoard, this.playerCellViews);
         this.restoreShotMarks(machineBoard, this.enemyCellViews);
@@ -453,10 +463,11 @@ public class GameController
     {
         try
         {
+            com.example.miniproyecto4.persistence.SaveLocation.ensureDirectoryExists();
             FlatFilePlayerRepository repository = new FlatFilePlayerRepository(PLAYERS_FILE_PATH);
             repository.save(this.playerData);
         }
-        catch (PersistenceException exception)
+        catch (PersistenceException | java.io.IOException exception)
         {
             DialogHelper.showError("No se pudo guardar el resultado",
                     "La partida terminó correctamente, pero no se pudo registrar el resultado "
@@ -600,6 +611,15 @@ public class GameController
 
     private void writeGameState() throws PersistenceException
     {
+        try
+        {
+            com.example.miniproyecto4.persistence.SaveLocation.ensureDirectoryExists();
+        }
+        catch (java.io.IOException exception)
+        {
+            throw new PersistenceException(
+                    "Could not create the save folder (" + SAVE_FILE_PATH.getParent() + ")", exception);
+        }
         SerializableGameState state = new SerializableGameState(
                 this.humanOpponent.getBoard(), this.machineOpponent.getBoard(),
                 this.playerData, this.humanTurn);
@@ -620,45 +640,36 @@ public class GameController
         }
     }
 
-    // HU-3: the reveal is a paid, time-boxed verification tool, not a free
-    // toggle. Each click costs one use (max MAX_ENEMY_BOARD_VIEWS per match,
-    // enforced by PlayerData) and one penalty miss, then auto-hides itself
-    // after ENEMY_VIEW_DURATION so it cannot be left on as a permanent
-    // cheat during normal play.
-    private static final Duration ENEMY_VIEW_DURATION = Duration.seconds(3);
+    // HU-3 (verification option from the enunciado): "Esta opción debe estar
+    // disponible únicamente para fines de verificación... y no durante el
+    // juego normal. El tablero principal del oponente se muestra
+    // correctamente con todos los barcos ubicados." Plain toggle, no cost,
+    // no time limit, no penalty, and deliberately NOT reachable from any
+    // visible button or menu - only VERIFY_BOARD_SHORTCUT triggers it, so it
+    // stays invisible during normal play.
+    private static final KeyCombination VERIFY_BOARD_SHORTCUT =
+            new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN);
 
-    private void handleViewEnemy()
+    private void handleVerifyEnemyBoard()
     {
-        if (this.gameOver || this.paused || this.enemyFleetRevealed
-                || !this.playerData.canViewEnemyBoard())
+        this.verificationModeActive = !this.verificationModeActive;
+        this.paintEnemyFleet(this.verificationModeActive ? CellState.SHIP : CellState.WATER);
+    }
+
+    // Only listens for VERIFY_BOARD_SHORTCUT (Ctrl+Shift+V); every other key
+    // is ignored and left to bubble up normally.
+    private void handleKeyPressed(KeyEvent event)
+    {
+        if (VERIFY_BOARD_SHORTCUT.match(event))
         {
-            return;
+            this.handleVerifyEnemyBoard();
+            event.consume();
         }
-
-        this.playerData.registerEnemyBoardView();
-        this.refreshStatsLabels();
-        this.persistGameState();
-
-        this.enemyFleetRevealed = true;
-        this.paintEnemyFleet(CellState.SHIP);
-        this.updateViewEnemyButton();
-
-        PauseTransition revealWindow = new PauseTransition(ENEMY_VIEW_DURATION);
-        revealWindow.setOnFinished(event -> this.hideEnemyFleet());
-        revealWindow.play();
     }
 
-    // Called automatically once ENEMY_VIEW_DURATION elapses.
-    private void hideEnemyFleet()
-    {
-        this.enemyFleetRevealed = false;
-        this.paintEnemyFleet(CellState.WATER);
-        this.updateViewEnemyButton();
-    }
-
-    // Shared by handleViewEnemy/hideEnemyFleet: paints every not-yet-resolved
-    // enemy ship segment as either SHIP (reveal) or WATER (hide again),
-    // leaving cells the player already hit/sunk for real untouched.
+    // Paints every not-yet-resolved enemy ship segment as either SHIP
+    // (reveal) or WATER (hide again), leaving cells the player already
+    // hit/sunk for real untouched.
     private void paintEnemyFleet(CellState stateToApply)
     {
         for (Ship ship : this.machineOpponent.getFleet())
@@ -679,15 +690,6 @@ public class GameController
                 cellView.setState(stateToApply);
             }
         }
-    }
-
-    // Reflects the remaining uses on the button label, and disables it once
-    // the limit is reached or while a reveal is currently in progress.
-    private void updateViewEnemyButton()
-    {
-        int remaining = this.playerData.getRemainingEnemyBoardViews();
-        this.viewEnemyBtn.setText("Ver tablero enemigo (" + remaining + ")");
-        this.viewEnemyBtn.setDisable(remaining <= 0 || this.enemyFleetRevealed);
     }
 
     private void handleExit()

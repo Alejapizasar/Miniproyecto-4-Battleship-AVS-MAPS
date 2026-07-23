@@ -5,6 +5,7 @@
  * archivo cubre bordes, hover, y la "piel" del resto de la interfaz.
  *
  * Author: Alejandro Valencia Sandoval
+ * Author: Maria Alejandra Pizarro Sarria
  */
 
 .root {
@@ -34,6 +35,18 @@
 
 .cell-sunk {
     -fx-opacity: 0.9;
+}
+
+/* Applied once a cell has a final shot result (miss/hit/sunk): no hand
+   cursor and no hover glow, so it visually reads as "already resolved,
+   nothing to click here" instead of only rejecting the click after the
+   fact via a dialog (Nielsen: error prevention over error messages). */
+.cell-resolved {
+    -fx-cursor: default;
+}
+
+.cell-resolved:hover {
+    -fx-effect: none;
 }
 
 .grid-header-label {

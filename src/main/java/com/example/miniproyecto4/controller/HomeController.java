@@ -27,7 +27,7 @@ public class HomeController
     private static final String GAME_VIEW_FXML = "/com/example/miniproyecto4/Views/GameView.fxml";
 
     // Must match the path GameController writes to in persistGameState().
-    private static final Path SAVE_FILE_PATH = Path.of("battleship_save.dat");
+    private static final Path SAVE_FILE_PATH = com.example.miniproyecto4.persistence.SaveLocation.GAME_STATE_FILE;
 
     @FXML
     private Button startBtn;

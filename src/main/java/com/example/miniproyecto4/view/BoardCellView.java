@@ -71,6 +71,19 @@ public class BoardCellView extends StackPane
     {
         this.state = newState;
         this.render();
+
+        // Error prevention (Nielsen heuristic): once a cell has a final shot
+        // result, it can no longer be clicked at all, instead of only
+        // rejecting the click afterwards with an InvalidShotException/Alert.
+        boolean resolved = newState == CellState.MISS
+                || newState == CellState.HIT
+                || newState == CellState.SUNK;
+        this.setMouseTransparent(resolved);
+        this.getStyleClass().remove("cell-resolved");
+        if (resolved)
+        {
+            this.getStyleClass().add("cell-resolved");
+        }
     }
 
     public CellState getState()

@@ -1,13 +1,13 @@
 package com.example.miniproyecto4.strategy;
 
-import java.util.Random;
-
+import com.example.miniproyecto4.exceptions.PlacementException;
 import com.example.miniproyecto4.model.Board;
 import com.example.miniproyecto4.model.Coordinate;
 import com.example.miniproyecto4.model.Orientation;
-import com.example.miniproyecto4.exceptions.PlacementException;
 import com.example.miniproyecto4.model.Ship;
 import com.example.miniproyecto4.model.interfaces.ShipPlacementStrategy;
+
+import java.util.Random;
 
 /**
  * Ignores the origin/orientation it receives and instead searches for a

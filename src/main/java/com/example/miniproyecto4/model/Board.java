@@ -4,13 +4,7 @@ import com.example.miniproyecto4.exceptions.InvalidShotException;
 import com.example.miniproyecto4.exceptions.PlacementException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Domain-level 10x10 board. Tracks which ship occupies each coordinate

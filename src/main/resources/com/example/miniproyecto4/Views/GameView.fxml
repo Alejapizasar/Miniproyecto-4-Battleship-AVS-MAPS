@@ -40,18 +40,6 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="viewEnemyBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="194.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Ver tablero enemigo" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
-                           <image>
-                              <Image url="@../Iconos/eye.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <font>
-                        <Font name="Courier New" size="11.0" />
-                     </font>
-                  </Button>
                   <Button fx:id="pauseBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Pausa" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
