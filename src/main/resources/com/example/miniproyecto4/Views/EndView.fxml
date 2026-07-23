@@ -45,7 +45,7 @@
                               <Font name="Courier New" size="11.0" />
                            </font>
                         </Button>
-                        <Button fx:id="mainMenuBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="150.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Menu Principal" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                        <Button fx:id="mainMenuBtn" mnemonicParsing="false" prefHeight="34.0" prefWidth="170.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-padding: 4 6 4 6;" text="Menu Principal" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                            <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

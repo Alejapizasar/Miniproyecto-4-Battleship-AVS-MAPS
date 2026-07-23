@@ -28,9 +28,9 @@
                   <Insets bottom="10" left="16" right="16" top="10" />
                </padding>
                <children>
-                  <Button fx:id="saveGameBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="143.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Guardar partida" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="saveGameBtn" alignment="CENTER" contentDisplay="LEFT" graphicTextGap="6.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="150.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-padding: 4 6 4 6;" text="Guardar" textAlignment="CENTER" textFill="WHITE">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../Iconos/save.png" />
                            </image>
@@ -40,9 +40,9 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="pauseBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Pausa" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="pauseBtn" alignment="CENTER" contentDisplay="LEFT" graphicTextGap="6.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="112.0" style="-fx-background-color: #2A4B6C; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-padding: 4 6 4 6;" text="Pausa" textAlignment="CENTER" textFill="WHITE">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../Iconos/pause.png" />
                            </image>
@@ -52,9 +52,9 @@
                         <Font name="Courier New" size="11.0" />
                      </font>
                   </Button>
-                  <Button fx:id="exitBtn" mnemonicParsing="false" prefHeight="31.0" prefWidth="96.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2;" text="Salir" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Button fx:id="exitBtn" alignment="CENTER" contentDisplay="LEFT" graphicTextGap="6.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="112.0" style="-fx-background-color: #701C24; -fx-border-color: #8B7043; -fx-border-radius: 2; -fx-padding: 4 6 4 6;" text="Salir" textAlignment="CENTER" textFill="WHITE">
                      <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-fit-width: 12;">
+                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../Iconos/exit.png" />
                            </image>
