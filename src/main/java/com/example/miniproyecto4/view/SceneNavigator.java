@@ -9,31 +9,31 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Small collaborator responsible for switching the root of the current
- * Stage to a different FXML view. Kept out of the controllers so they
- * do not depend directly on FXMLLoader/Stage plumbing (low coupling).
- *
- * <p>This is a plain, instantiable class on purpose (each controller
- * creates its own instance) so it does not become a Singleton.</p>
+ * Utility class responsible for navigating between JavaFX scenes.
+ * It loads FXML views, replaces the current scene displayed in
+ * the application window, and optionally returns the controller
+ * associated with the loaded view.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class SceneNavigator
 {
+    /**
+     * Creates a new scene navigator.
+     */
     public SceneNavigator()
     {
     }
 
     /**
-     * Replaces the scene of the window that owns {@code sourceNode}
-     * with the view loaded from {@code fxmlResourcePath}.
+     * Loads the specified FXML view and replaces the current scene
+     * displayed in the application's stage.
      *
-     * @param sourceNode       any node currently attached to the active Stage
-     *                         (usually the button that triggered the navigation)
-     * @param fxmlResourcePath classpath-relative path to the target FXML file
-     * @param windowTitle      title to set on the Stage after switching
-     * @throws IOException if the FXML file cannot be loaded
+     * @param sourceNode the node that belongs to the current stage.
+     * @param fxmlResourcePath the path of the FXML file to load.
+     * @param windowTitle the title assigned to the application window.
+     * @throws IOException if the FXML file cannot be loaded.
      */
     public void navigateTo(Node sourceNode, String fxmlResourcePath, String windowTitle) throws IOException
     {
@@ -41,16 +41,14 @@ public class SceneNavigator
     }
 
     /**
-     * Same as {@link #navigateTo(Node, String, String)}, but also returns
-     * the controller instance FXMLLoader created for the new scene, so the
-     * caller can push data into it right after switching screens (e.g.
-     * handing the placed fleet from PlayerController to GameController).
+     * Loads the specified FXML view, replaces the current scene,
+     * and returns the controller associated with the loaded view.
      *
-     * @param sourceNode       any node currently attached to the active Stage
-     * @param fxmlResourcePath classpath-relative path to the target FXML file
-     * @param windowTitle      title to set on the Stage after switching
-     * @return the controller instance bound to the newly loaded FXML
-     * @throws IOException if the FXML file cannot be loaded
+     * @param sourceNode the node that belongs to the current stage.
+     * @param fxmlResourcePath the path of the FXML file to load.
+     * @param windowTitle the title assigned to the application window.
+     * @return the controller associated with the loaded FXML view.
+     * @throws IOException if the FXML file cannot be loaded.
      */
     public Object navigateToAndGetController(Node sourceNode, String fxmlResourcePath, String windowTitle) throws IOException
     {

@@ -11,34 +11,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Plain-text record of every match played: one line per game with
- * {@code nickname;shipsSunk}, matching the semicolon-separated,
- * comment-friendly format used elsewhere in this project's file inputs.
- * This is intentionally NOT serialized Java state (that is
- * {@link GameStateSerializer}'s job) so it stays human-readable and easy
- * to append to across runs.
+ * Repository responsible for storing and retrieving player match
+ * records using a plain text file. Each record contains the player's
+ * name and the number of ships sunk during a completed match.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class FlatFilePlayerRepository
 {
+    /**
+     * Separator used between fields in each record.
+     */
     private static final String SEPARATOR = ";";
+
+    /**
+     * Prefix used to identify comment lines.
+     */
     private static final String COMMENT_PREFIX = "#";
 
+    /**
+     * Path of the file containing the player records.
+     */
     private final Path filePath;
 
+    /**
+     * Creates a new repository that stores player records in
+     * the specified file.
+     *
+     * @param filePath the path of the persistence file.
+     */
     public FlatFilePlayerRepository(Path filePath)
     {
         this.filePath = filePath;
     }
 
     /**
-     * Appends one line for this match's result. Creates the file (with a
-     * header comment) the first time it is called.
+     * Saves the specified player's statistics by appending
+     * a new record to the persistence file.
      *
-     * @param playerData the stats to record
-     * @throws PersistenceException if the file cannot be written
+     * @param playerData the player information to be stored.
+     * @throws PersistenceException if the record cannot be written.
      */
     public void save(PlayerData playerData) throws PersistenceException
     {
@@ -60,9 +73,10 @@ public class FlatFilePlayerRepository
     }
 
     /**
-     * @return every recorded match as {@code [nickname, shipsSunk]} pairs,
-     *         skipping blank lines and {@code #} comments
-     * @throws PersistenceException if the file cannot be read
+     * Loads all player records stored in the persistence file.
+     *
+     * @return a list containing every stored player record.
+     * @throws PersistenceException if the records cannot be read.
      */
     public List<String[]> loadAll() throws PersistenceException
     {

@@ -1,21 +1,24 @@
 package com.example.miniproyecto4.exceptions;
 
 /**
- * Unchecked exception thrown when a {@link com.example.miniproyecto4.model.Ship}
- * is constructed with a non-positive size.
+ * Exception thrown when an attempt is made to create a ship with
+ * an invalid size.
+ * This exception represents a programming error caused by defining
+ * a ship with a non-positive length. Since ship sizes are expected
+ * to be validated during development, this exception extends
+ * {@code RuntimeException} and is not intended to be handled during
+ * normal application execution.
  *
- * <p>Unlike {@link PlacementException} or {@link InvalidShotException}
- * (checked — expected situations a caller must decide how to recover
- * from, e.g. "the player clicked an invalid cell"), this represents a
- * programmer error: a fleet definition that should never be malformed in
- * the first place. Callers are not expected to catch this; it is meant
- * to fail loudly during development instead of silently building a
- * broken ship.</p>
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class InvalidShipSizeException extends RuntimeException
 {
+    /**
+     * Creates a new exception with the specified detail message.
+     *
+     * @param message the detail message describing the cause of the exception.
+     */
     public InvalidShipSizeException(String message)
     {
         super(message);

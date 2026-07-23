@@ -12,16 +12,10 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Factory Method que centraliza la construcción de las figuras 2D de un
- * barco completo (proa + cubierta + popa), en lugar de dibujar solo un
- * "hull" genérico por casilla. Se apoya en {@link BoardCellView} solo
- * para conocer el tamaño de celda, pero no depende de JavaFX layout: el
- * llamador decide dónde poner cada segmento devuelto.
- *
- * <p>Este es el punto único donde se decide "cómo se ve" cada tamaño de
- * barco, siguiendo el principio de responsabilidad única (SRP) y abierto
- * a extensión (OCP): agregar un nuevo tamaño de barco solo implica
- * agregar un caso nuevo, sin tocar el resto del código de la UI.</p>
+ * Factory class responsible for creating the graphical representation
+ * of ship segments using JavaFX shapes. It generates the appropriate
+ * bow, middle, or stern section according to the ship size, segment
+ * position, and orientation.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
@@ -30,18 +24,21 @@ public final class ShipShapeFactory
 {
     private static final double CELL_SIZE = 32.0;
 
+    /**
+     * Prevents instantiation of this utility class.
+     */
     private ShipShapeFactory()
     {
     }
 
     /**
-     * Construye un segmento de barco para una única casilla dentro de un
-     * barco de tamaño {@code shipSize}.
+     * Creates the graphical representation of a ship segment.
      *
-     * @param shipSize        tamaño total del barco (1 a 4)
-     * @param segmentIndex    posición de este segmento dentro del barco (0-based)
-     * @param orientation     orientación actual del barco
-     * @return un {@link Group} listo para insertarse dentro de un {@link BoardCellView}
+     * @param shipSize the total number of segments that compose the ship.
+     * @param segmentIndex the position of the segment within the ship.
+     * @param orientation the orientation of the ship.
+     * @return a JavaFX group containing the shapes that represent the
+     *         requested ship segment.
      */
     public static Group buildSegment(int shipSize, int segmentIndex, Orientation orientation)
     {
@@ -58,6 +55,14 @@ public final class ShipShapeFactory
 
     // Cubierta base: rectangulo con esquinas redondeadas en el segmento
     // central, y forma de "proa" en punta si es el primer/ultimo segmento.
+    /**
+     * Creates the main deck shape for a ship segment.
+     *
+     * @param isBow indicates whether the segment is the bow.
+     * @param isStern indicates whether the segment is the stern.
+     * @param orientation the orientation of the ship.
+     * @return the JavaFX node representing the deck of the segment.
+     */
     private static javafx.scene.Node buildDeck(boolean isBow, boolean isStern, Orientation orientation)
     {
         LinearGradient hullGradient = new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
@@ -80,10 +85,6 @@ public final class ShipShapeFactory
         double half = CELL_SIZE * 0.4;
         Polygon hullPolygon = new Polygon();
 
-        // La punta debe mirar hacia afuera del barco: si este segmento es
-        // la proa (extremo inicial), la punta usa la forma "trasera" del
-        // switch de abajo, y viceversa para la popa. Por eso se compara
-        // contra isStern y no contra isBow.
         boolean pointsForward = isStern;
         if (orientation == Orientation.HORIZONTAL)
         {
@@ -135,6 +136,13 @@ public final class ShipShapeFactory
     }
 
     // Linea fina de "junta de cubierta" para dar sensacion de segmentos unidos.
+    /**
+     * Creates the decorative line used to visually connect ship
+     * segments.
+     *
+     * @param orientation the orientation of the ship.
+     * @return a line representing the deck detail.
+     */
     private static javafx.scene.shape.Line buildDetailLine(Orientation orientation)
     {
         javafx.scene.shape.Line line;

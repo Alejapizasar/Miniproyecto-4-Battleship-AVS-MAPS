@@ -12,53 +12,97 @@ import com.example.miniproyecto4.view.DialogHelper;
 import com.example.miniproyecto4.view.SceneNavigator;
 
 /**
- * Controller for EndView.fxml. Receives the match result from
- * {@link GameController} right after the scene switch (see
- * {@link #setResult}) and fills in the victory/defeat title, message,
- * and final stats, then wires the three navigation buttons.
+ * Controller responsible for managing the end game screen.
+ * This controller receives the final match result from the game controller,
+ * updates the displayed outcome and player statistics, and handles the
+ * available navigation options after the match has finished.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class EndController
 {
+    /**
+     * Path to the home screen FXML file.
+     */
     private static final String HOME_VIEW_FXML = "/com/example/miniproyecto4/Views/HomeView.fxml";
+
+    /**
+     * Path to the player setup screen FXML file.
+     */
     private static final String PLAYER_VIEW_FXML = "/com/example/miniproyecto4/Views/PlayerView.fxml";
 
+    /**
+     * Label displaying the match result title.
+     */
     @FXML
     private Label resultTitleLabel;
 
+    /**
+     * Label displaying the result message.
+     */
     @FXML
     private Label resultMessageLabel;
 
+    /**
+     * Label displaying the total number of shots fired.
+     */
     @FXML
     private Label shotsValueLabel;
 
+    /**
+     * Label displaying the total number of successful hits.
+     */
     @FXML
     private Label hitsValueLabel;
 
+    /**
+     * Label displaying the total number of enemy ships sunk.
+     */
     @FXML
     private Label sunkValueLabel;
 
+    /**
+     * Label displaying the total number of turns played.
+     */
     @FXML
     private Label turnsValueLabel;
 
+    /**
+     * Button that starts a new game.
+     */
     @FXML
     private Button newGameBtn;
 
+    /**
+     * Button that returns to the main menu.
+     */
     @FXML
     private Button mainMenuBtn;
 
+    /**
+     * Button that closes the application.
+     */
     @FXML
     private Button quitBtn;
 
+    /**
+     * Utility object responsible for scene navigation.
+     */
     private final SceneNavigator sceneNavigator;
 
+    /**
+     * Creates a new end screen controller.
+     */
     public EndController()
     {
         this.sceneNavigator = new SceneNavigator();
     }
 
+    /**
+     * Initializes the controller after the FXML components have been loaded.
+     * Event handlers are assigned to each available button.
+     */
     @FXML
     private void initialize()
     {
@@ -68,10 +112,11 @@ public class EndController
     }
 
     /**
-     * Fills in this screen with the outcome of the match that just ended.
+     * Updates the end game screen with the final match result and
+     * the player's statistics.
      *
-     * @param victory true if the human player won, false if they lost
-     * @param data    the human player's final stats for this match
+     * @param victory indicates whether the human player won the match.
+     * @param data contains the player's final statistics.
      */
     public void setResult(boolean victory, PlayerData data)
     {
@@ -92,6 +137,10 @@ public class EndController
         this.turnsValueLabel.setText(String.valueOf(data.getShotsFired()));
     }
 
+    /**
+     * Opens the player setup screen to start a new game.
+     * Displays an error dialog if the requested view cannot be loaded.
+     */
     private void handleNewGame()
     {
         try
@@ -105,6 +154,10 @@ public class EndController
         }
     }
 
+    /**
+     * Returns the user to the main menu.
+     * Displays an error dialog if the requested view cannot be loaded.
+     */
     private void handleMainMenu()
     {
         try

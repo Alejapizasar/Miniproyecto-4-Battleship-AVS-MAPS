@@ -9,15 +9,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Writes and reads a {@link SerializableGameState} to/from disk using
- * plain Java serialization, so a paused match can be resumed exactly
- * where it was left (both boards, fleets, shots already fired, and the
- * player's stats).
+ * Provides the functionality required to save and restore the complete
+ * state of a Battleship match using Java object serialization.
+ * This class allows a game to be persisted to disk and later restored
+ * with all its data, including boards, fleets, player statistics,
+ * and game progress.
  *
  * @author Alejandro Valencia Sandoval
+ * @author Maria Alejandra Pizarro Sarria
  */
 public class GameStateSerializer
 {
+    /**
+     * Serializes the specified game state and stores it in the
+     * given file.
+     *
+     * @param state the game state to be saved.
+     * @param path the destination file path.
+     * @throws PersistenceException if the game state cannot be written.
+     */
     public void save(SerializableGameState state, Path path) throws PersistenceException
     {
         try (ObjectOutputStream output = new ObjectOutputStream(Files.newOutputStream(path)))
@@ -30,6 +40,15 @@ public class GameStateSerializer
         }
     }
 
+    /**
+     * Restores a previously serialized game state from the
+     * specified file.
+     *
+     * @param path the path of the file containing the saved game.
+     * @return the restored game state.
+     * @throws PersistenceException if the game state cannot be loaded
+     *                              or deserialized.
+     */
     public SerializableGameState load(Path path) throws PersistenceException
     {
         try (ObjectInputStream input = new ObjectInputStream(Files.newInputStream(path)))

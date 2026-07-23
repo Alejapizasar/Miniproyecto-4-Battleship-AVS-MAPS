@@ -121,6 +121,14 @@ public class GameController
     // is read-only during this phase.
     private Coordinate enemyCursorCoordinate;
 
+    /**
+     * Creates the collaborators this controller owns for the lifetime of
+     * a match: the cell-view lookup maps for both grids, the persistence
+     * helpers, and the shared turn lock. The actual match data (boards,
+     * opponents, player stats) is supplied afterward by either
+     * initializePlayerData or resumeGame, since FXMLLoader must be able
+     * to call this constructor with no arguments.
+     */
     public GameController()
     {
         this.playerCellViews = new HashMap<>();
@@ -201,6 +209,9 @@ public class GameController
         this.timerThread.start();
     }
 
+    /**
+     * @return the human player's stats for the match currently in progress
+     */
     public PlayerData getPlayerData()
     {
         return this.playerData;

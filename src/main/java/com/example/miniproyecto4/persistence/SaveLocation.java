@@ -5,25 +5,42 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Single source of truth for where save files live on disk: a fixed
- * folder inside the user's home directory ({@code ~/.battleship/})
- * instead of a path relative to the current working directory, which
- * resolves differently depending on how the app is launched and can
- * silently point two launches at two different physical files.
+ * Utility class that defines the default location used to store
+ * the application's persistence files. This class provides access
+ * to the save directory as well as the files used for serialized
+ * game states and player records.
  *
  * @author Maria Alejandra Pizarro Sarria
  */
 public final class SaveLocation
 {
+    /**
+     * Directory where all application persistence files are stored.
+     */
     private static final Path SAVE_DIRECTORY = Path.of(System.getProperty("user.home"), ".battleship");
 
+    /**
+     * Path of the serialized game state file.
+     */
     public static final Path GAME_STATE_FILE = SAVE_DIRECTORY.resolve("battleship_save.dat");
+
+    /**
+     * Path of the player records file.
+     */
     public static final Path PLAYERS_FILE = SAVE_DIRECTORY.resolve("players.txt");
 
+    /**
+     * Prevents the instantiation of this utility class.
+     */
     private SaveLocation()
     {
     }
 
+    /**
+     * Creates the save directory if it does not already exist.
+     *
+     * @throws IOException if the directory cannot be created.
+     */
     public static void ensureDirectoryExists() throws IOException
     {
         if (Files.notExists(SAVE_DIRECTORY))

@@ -5,21 +5,39 @@ import javafx.application.Platform;
 import java.util.function.LongConsumer;
 
 /**
- * Background thread that ticks once per second for the whole match and
- * reports the elapsed seconds back to the JavaFX Application Thread.
- * Runs independently of the turn logic (it is not guarded by the same
- * turn lock as {@link MachineTurnThread}) since it only reads a counter
- * and never touches the boards.
+ * Background thread responsible for tracking the elapsed game time.
+ * The thread increments the elapsed time once every second and notifies
+ * the JavaFX Application Thread through the provided callback.
+ * This timer runs independently from the turn management threads because
+ * it only keeps track of time and does not interact with the game boards
+ * or the synchronization mechanisms used during gameplay.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class GameTimerThread extends Thread
 {
+    /**
+     * Callback invoked every second with the current elapsed time.
+     */
     private final LongConsumer onTick;
+
+    /**
+     * Indicates whether the timer thread should continue running.
+     */
     private volatile boolean running;
+
+    /**
+     * Indicates whether the timer is currently paused.
+     */
     private volatile boolean paused;
 
+    /**
+     * Creates a new game timer thread.
+     *
+     * @param onTick callback that receives the elapsed time in seconds
+     *               after each timer tick.
+     */
     public GameTimerThread(LongConsumer onTick)
     {
         this.onTick = onTick;
@@ -29,6 +47,12 @@ public class GameTimerThread extends Thread
         this.setName("game-timer-thread");
     }
 
+    /**
+     * Executes the timer loop while the thread is running.
+     * The elapsed time is increased once per second unless the timer
+     * is paused. Each updated value is reported on the JavaFX
+     * Application Thread.
+     */
     @Override
     public void run()
     {
@@ -59,21 +83,27 @@ public class GameTimerThread extends Thread
         }
     }
 
-    /** Freezes the clock (no more ticks reported) until {@link #resumeTimer()}. */
+    /**
+     * Pauses the timer. No additional time is counted or reported
+     * until the timer is resumed.
+     */
     public void pauseTimer()
     {
         this.paused = true;
     }
 
-    /** Resumes reporting ticks after a {@link #pauseTimer()} call. */
+    /**
+     * Resumes the timer after it has been paused.
+     */
     public void resumeTimer()
     {
         this.paused = false;
     }
 
     /**
-     * Stops the timer after the current tick finishes; safe to call from
-     * the JavaFX Application Thread (e.g. on victory/defeat or exit).
+     * Stops the timer thread and interrupts its execution if it is
+     * currently waiting. This method is intended to be called when
+     * the game finishes or the application is closed.
      */
     public void stopTimer()
     {

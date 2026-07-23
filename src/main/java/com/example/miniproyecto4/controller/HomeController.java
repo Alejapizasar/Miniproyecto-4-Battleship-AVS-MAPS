@@ -15,38 +15,72 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 /**
- * Controller for HomeView.fxml. Handles navigation out of the home
- * screen: starting a new game, continuing a saved one, or quitting.
+ * Controller responsible for managing the application's home screen.
+ * This controller handles the navigation to a new game, resumes a
+ * previously saved match, or closes the application.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class HomeController
 {
+    /**
+     * Path to the player setup view.
+     */
     private static final String PLAYER_VIEW_FXML = "/com/example/miniproyecto4/Views/PlayerView.fxml";
+
+    /**
+     * Path to the game view.
+     */
     private static final String GAME_VIEW_FXML = "/com/example/miniproyecto4/Views/GameView.fxml";
 
-    // Must match the path GameController writes to in persistGameState().
+    /**
+     * Path to the serialized game state file.
+     */
     private static final Path SAVE_FILE_PATH = com.example.miniproyecto4.persistence.SaveLocation.GAME_STATE_FILE;
 
+    /**
+     * Button used to start a new game.
+     */
     @FXML
     private Button startBtn;
 
+    /**
+     * Button used to continue a previously saved game.
+     */
     @FXML
     private Button continueBtn;
 
+    /**
+     * Button used to close the application.
+     */
     @FXML
     private Button quitBtn;
 
+    /**
+     * Utility responsible for scene navigation.
+     */
     private final SceneNavigator sceneNavigator;
+
+    /**
+     * Component responsible for loading serialized game states.
+     */
     private final GameStateSerializer gameStateSerializer;
 
+    /**
+     * Creates a new home screen controller.
+     */
     public HomeController()
     {
         this.sceneNavigator = new SceneNavigator();
         this.gameStateSerializer = new GameStateSerializer();
     }
 
+    /**
+     * Initializes the controller after the FXML components have been loaded.
+     * Event handlers are assigned to each button and the continue button
+     * is enabled only when a saved game is available.
+     */
     @FXML
     private void initialize()
     {
@@ -59,6 +93,10 @@ public class HomeController
         this.continueBtn.setDisable(Files.notExists(SAVE_FILE_PATH));
     }
 
+    /**
+     * Opens the player setup screen to begin a new match.
+     * Displays an error dialog if the destination view cannot be loaded.
+     */
     private void handleStartNewGame()
     {
         try
@@ -72,6 +110,11 @@ public class HomeController
         }
     }
 
+    /**
+     * Restores a previously saved game by loading the serialized game state
+     * and passing it to the game controller.
+     * Displays an error dialog if the save file cannot be loaded.
+     */
     private void handleContinueGame()
     {
         try
@@ -94,6 +137,9 @@ public class HomeController
         }
     }
 
+    /**
+     * Closes the JavaFX application.
+     */
     private void handleQuit()
     {
         Platform.exit();

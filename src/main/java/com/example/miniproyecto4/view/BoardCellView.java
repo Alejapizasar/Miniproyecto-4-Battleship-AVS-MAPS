@@ -15,36 +15,64 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 
 /**
- * A single cell of a Battleship board, drawn entirely with JavaFX 2D shapes
- * (no images). Each instance is a small {@link StackPane} that can be added
- * directly into a {@code GridPane} column/row, and redrawn on demand by
- * calling {@link #setState(CellState)}.
- *
- * <p>When a cell holds part of a ship, the actual hull graphic is delegated
- * to {@link ShipShapeFactory} so the bow/stern/mid-section look different
- * from each other. Call {@link #setShipSegmentInfo(int, int, Orientation)}
- * once, right before switching the state to {@code SHIP}/{@code HIT}/{@code SUNK}.</p>
+ * Visual representation of a single cell in the Battleship board.
+ * Each cell is rendered using JavaFX shapes and updates its
+ * appearance according to its current state, allowing it to
+ * display water, ships, hits, misses, and sunk ships.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class BoardCellView extends StackPane
 {
+    /**
+     * Default width and height of each board cell.
+     */
     private static final double CELL_SIZE = 32.0;
 
+    /**
+     * Dark color used for the water background.
+     */
     private static final Color WATER_DARK = Color.web("#0B3D5C");
+
+    /**
+     * Light color used for the water background.
+     */
     private static final Color WATER_LIGHT = Color.web("#2E7DAF");
+
+    /**
+     * Color used to represent a missed shot.
+     */
     private static final Color MISS_MARK = Color.web("#D9E6EF");
+
+    /**
+     * Base color used to indicate a sunk ship.
+     */
     private static final Color SUNK_OVERLAY = Color.web("#1A1A1A");
 
+    /**
+     * Current visual state of the cell.
+     */
     private CellState state;
 
-    // Info about the ship this cell belongs to (which segment: bow, mid,
-    // stern), only relevant when state is SHIP, HIT or SUNK.
+    /**
+     * Size of the ship occupying this cell.
+     */
     private int shipSize = 1;
+
+    /**
+     * Position of this cell within the ship.
+     */
     private int segmentIndex = 0;
+
+    /**
+     * Orientation of the ship occupying this cell.
+     */
     private Orientation orientation = Orientation.HORIZONTAL;
 
+    /**
+     * Creates a new board cell initialized as water.
+     */
     public BoardCellView()
     {
         this.state = CellState.WATER;
@@ -56,9 +84,12 @@ public class BoardCellView extends StackPane
     }
 
     /**
-     * Registers which ship this cell belongs to, so the correct segment
-     * shape (bow / body / stern) gets drawn. Call before {@link #setState}
-     * when the new state is SHIP, HIT or SUNK.
+     * Stores the information required to draw the corresponding
+     * ship segment inside this cell.
+     *
+     * @param shipSize the total size of the ship.
+     * @param segmentIndex the position of this segment within the ship.
+     * @param orientation the orientation of the ship.
      */
     public void setShipSegmentInfo(int shipSize, int segmentIndex, Orientation orientation)
     {
@@ -67,16 +98,17 @@ public class BoardCellView extends StackPane
         this.orientation = orientation;
     }
 
+    /**
+     * Updates the current state of the cell and refreshes
+     * its visual representation.
+     *
+     * @param newState the new state assigned to the cell.
+     */
     public void setState(CellState newState)
     {
         this.state = newState;
         this.render();
 
-        // Visual-only marker for a cell with a final shot result. Clicking
-        // it again still has to reach the controller so Board.receiveShot()
-        // can throw InvalidShotException and DialogHelper shows the "ya fue
-        // disparada antes" warning - that feedback loop is a requirement,
-        // not just a nice-to-have, so this cell must stay clickable.
         boolean resolved = newState == CellState.MISS
                 || newState == CellState.HIT
                 || newState == CellState.SUNK;
@@ -87,16 +119,22 @@ public class BoardCellView extends StackPane
         }
     }
 
+    /**
+     * Returns the current state of the cell.
+     *
+     * @return the current cell state.
+     */
     public CellState getState()
     {
         return this.state;
     }
 
     /**
-     * Toggles the CSS class used to highlight this cell as the current
-     * keyboard-navigation cursor during manual ship placement.
+     * Enables or disables the visual highlight used to indicate
+     * the current keyboard selection.
      *
-     * @param focused true to show the highlight, false to clear it
+     * @param focused {@code true} to highlight the cell;
+     *                {@code false} to remove the highlight.
      */
     public void setKeyboardFocused(boolean focused)
     {
@@ -113,7 +151,10 @@ public class BoardCellView extends StackPane
         }
     }
 
-    // Clears the current children and rebuilds the shapes for the current state.
+    /**
+     * Rebuilds the graphical content of the cell according
+     * to its current state.
+     */
     private void render()
     {
         this.getChildren().clear();
@@ -145,6 +186,11 @@ public class BoardCellView extends StackPane
         }
     }
 
+    /**
+     * Creates the water background displayed in the cell.
+     *
+     * @return a pane containing the water graphics.
+     */
     private StackPane buildWater()
     {
         StackPane layer = new StackPane();
@@ -169,11 +215,22 @@ public class BoardCellView extends StackPane
         return layer;
     }
 
+    /**
+     * Creates the graphical representation of the ship segment
+     * occupying this cell.
+     *
+     * @return the ship segment graphic.
+     */
     private javafx.scene.Group buildShipSegment()
     {
         return ShipShapeFactory.buildSegment(this.shipSize, this.segmentIndex, this.orientation);
     }
 
+    /**
+     * Creates the visual marker used to represent a missed shot.
+     *
+     * @return the miss marker graphic.
+     */
     private javafx.scene.Group buildMissMark()
     {
         Line lineA = new Line(-8, -8, 8, 8);
@@ -187,6 +244,12 @@ public class BoardCellView extends StackPane
         return new javafx.scene.Group(lineA, lineB);
     }
 
+    /**
+     * Creates the explosion effect displayed when a ship
+     * segment is hit.
+     *
+     * @return the hit effect graphic.
+     */
     private javafx.scene.Group buildHitBurst()
     {
         Circle outer = new Circle(9);
@@ -202,6 +265,12 @@ public class BoardCellView extends StackPane
         return new javafx.scene.Group(outer, core);
     }
 
+    /**
+     * Creates the visual overlay displayed when a ship
+     * has been completely sunk.
+     *
+     * @return the sunk ship overlay graphic.
+     */
     private javafx.scene.Group buildSunkOverlay()
     {
         Rectangle darken = new Rectangle(CELL_SIZE, CELL_SIZE);

@@ -1,28 +1,42 @@
 package com.example.miniproyecto4.view;
 
 /**
- * Represents the possible visual states of a single cell on a game board.
- * Used by {@link BoardCellView} to decide which 2D graphic to render.
+ * Represents the different visual states that a board cell can
+ * display during a Battleship match. Each state determines the
+ * graphical appearance rendered by a {@link BoardCellView}.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public enum CellState
 {
-    // Untouched water, nothing has happened here yet.
+    /**
+     * Indicates that the cell contains only water and has not
+     * been targeted.
+     */
     WATER,
 
-    // A ship segment sits here and has not been hit (only rendered on the
-    // owner's own board, never on the enemy board unless in debug/verify mode).
+    /**
+     * Indicates that the cell contains a ship segment that has
+     * not been hit.
+     */
     SHIP,
 
-    // A shot was fired here and there was no ship: water splash / X mark.
+    /**
+     * Indicates that a shot was fired at the cell but no ship
+     * was present.
+     */
     MISS,
 
-    // A shot hit a ship segment that belongs to a ship with more than
-    // one remaining segment.
+    /**
+     * Indicates that the cell contains a ship segment that has
+     * been successfully hit.
+     */
     HIT,
 
-    // The last remaining segment of a ship was hit: the whole ship is sunk.
+    /**
+     * Indicates that the ship occupying this cell has been
+     * completely destroyed.
+     */
     SUNK
 }

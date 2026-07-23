@@ -5,11 +5,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 
 /**
- * Tiny static helper so every controller shows validation/error dialogs
- * with the exact same look, instead of duplicating the same five lines
- * of {@link Alert} boilerplate in every {@code catch} block across the
- * project. This is what several {@code // TODO: show an Alert} comments
- * left throughout the controllers were waiting for.
+ * Utility class that provides a consistent way of displaying
+ * informational, warning, and error dialogs throughout the
+ * application. All dialogs share the same visual style and
+ * behavior to ensure a uniform user experience.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
@@ -35,31 +34,29 @@ public final class DialogHelper
     private static final String WARNING_GLYPH = "\u26A0"; // warning triangle
     private static final String ERROR_GLYPH = "\u2620";   // skull and crossbones
 
+    /**
+     * Prevents instantiation of this utility class.
+     */
     private DialogHelper()
     {
     }
 
-    // Every Alert opens in its own Stage/Scene, so the main app's
-    // stylesheet is not inherited automatically - it has to be attached
-    // to the DialogPane by hand, once per alert, along with a type-
-    // specific style class (see .themed-alert / .alert-warning / etc.
-    // in battleship.css) so warnings, errors and info popups each get
-    // their own accent color instead of all looking identical.
+    /**
+     * Applies the common visual theme and icon to the specified alert.
+     *
+     * @param alert the alert to customize.
+     * @param typeStyleClass the CSS style class associated with the alert type.
+     * @param glyph the Unicode character displayed as the dialog icon.
+     */
     private static void applyTheme(Alert alert, String typeStyleClass, String glyph)
     {
         alert.getDialogPane().getStylesheets().add(
                 DialogHelper.class.getResource(STYLESHEET_PATH).toExternalForm());
         alert.getDialogPane().getStyleClass().addAll("themed-alert", typeStyleClass);
-        // typeStyleClass is "alert-info" / "alert-warning" / "alert-error";
-        // battleship.css defines the matching icon badge as
-        // "alert-icon-info" / "alert-icon-warning" / "alert-icon-error".
+
         String iconStyleClass = "alert-icon-" + typeStyleClass.substring("alert-".length());
         alert.setGraphic(DialogHelper.buildIcon(glyph, iconStyleClass));
 
-        // The .content.label CSS rule alone was losing to JavaFX's own
-        // default dialog styling in practice, leaving the message a dull
-        // gray instead of white. Forcing it inline guarantees it wins,
-        // regardless of stylesheet load order/specificity quirks.
         javafx.scene.Node contentLabel = alert.getDialogPane().lookup(".content.label");
         if (contentLabel != null)
         {
@@ -67,8 +64,13 @@ public final class DialogHelper
         }
     }
 
-    // Replaces JavaFX's default AlertType icon (the small OS-style i / !
-    // / x graphic) with a round badge showing a themed glyph instead.
+    /**
+     * Creates the graphic icon displayed in a dialog.
+     *
+     * @param glyph the Unicode character used as the icon.
+     * @param iconStyleClass the CSS style class applied to the icon.
+     * @return a styled label representing the dialog icon.
+     */
     private static Label buildIcon(String glyph, String iconStyleClass)
     {
         Label icon = new Label(glyph);
@@ -77,12 +79,10 @@ public final class DialogHelper
     }
 
     /**
-     * Shows a blocking informational dialog confirming that something the
-     * player explicitly asked for (e.g. "Guardar partida") actually
-     * succeeded.
+     * Displays an informational dialog.
      *
-     * @param title   short dialog title
-     * @param message plain-language confirmation
+     * @param title the title of the dialog.
+     * @param message the message displayed to the user.
      */
     public static void showInfo(String title, String message)
     {
@@ -95,13 +95,10 @@ public final class DialogHelper
     }
 
     /**
-     * Shows a blocking warning dialog for a recoverable, expected problem
-     * (invalid ship placement, cell already shot, incomplete fleet, etc.):
-     * something the player did that the game correctly rejected, but that
-     * they need to be told about to understand why nothing happened.
+     * Displays a warning dialog.
      *
-     * @param title   short dialog title
-     * @param message plain-language explanation of what went wrong
+     * @param title the title of the dialog.
+     * @param message the warning message displayed to the user.
      */
     public static void showWarning(String title, String message)
     {
@@ -114,13 +111,12 @@ public final class DialogHelper
     }
 
     /**
-     * Shows a blocking error dialog for an unexpected technical failure
-     * (I/O, serialization, navigation), where {@code cause} usually comes
-     * from one of this project's own checked exceptions.
+     * Displays an error dialog including the message of the
+     * underlying exception when available.
      *
-     * @param title   short dialog title
-     * @param message plain-language explanation of what went wrong
-     * @param cause   the underlying exception, only used for its message
+     * @param title the title of the dialog.
+     * @param message the error message displayed to the user.
+     * @param cause the exception associated with the error, or {@code null}.
      */
     public static void showError(String title, String message, Throwable cause)
     {

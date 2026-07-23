@@ -11,29 +11,53 @@ import javafx.application.Platform;
 import java.util.function.BiConsumer;
 
 /**
- * Runs the machine's single next shot on a background thread: a short
- * "thinking" delay via {@code Thread.sleep}, then resolves the shot
- * against the human board inside a {@code synchronized} block guarded by
- * a lock shared with the controller, so a human click cannot race with
- * the machine's turn. The result is handed back to the JavaFX
- * Application Thread through {@link Platform#runLater}, since JavaFX
- * nodes may only be touched from that thread.
- *
- * <p>One instance resolves exactly one shot; GameController starts a new
- * one for every consecutive hit the machine scores.</p>
+ * Background thread responsible for executing a single machine turn.
+ * The thread waits for a short delay to simulate the machine thinking,
+ * selects a target coordinate, performs the shot on the human player's
+ * board, and reports the result on the JavaFX Application Thread.
+ * Synchronization is performed using a shared lock to prevent race
+ * conditions between the human and machine turns.
  *
  * @author Alejandro Valencia Sandoval
  * @author Maria Alejandra Pizarro Sarria
  */
 public class MachineTurnThread extends Thread
 {
+    /**
+     * Delay in milliseconds used to simulate the machine's thinking time
+     * before taking a shot.
+     */
     private static final long THINKING_DELAY_MILLIS = 700;
 
+    /**
+     * Machine player responsible for selecting the next target.
+     */
     private final MachinePlayer machine;
+
+    /**
+     * Board representing the human player's fleet.
+     */
     private final Board humanBoard;
+
+    /**
+     * Shared lock used to synchronize the execution of player turns.
+     */
     private final Object turnLock;
+
+    /**
+     * Callback invoked after the machine's shot has been resolved.
+     * It receives the target coordinate and the corresponding shot result.
+     */
     private final BiConsumer<Coordinate, ShotResult> onShotResolved;
 
+    /**
+     * Creates a new thread responsible for executing a single machine turn.
+     *
+     * @param machine the machine player that selects the target coordinate.
+     * @param humanBoard the board where the machine performs its shot.
+     * @param turnLock the synchronization object shared with the game controller.
+     * @param onShotResolved callback executed after the shot has been processed.
+     */
     public MachineTurnThread(MachinePlayer machine, Board humanBoard, Object turnLock,
                              BiConsumer<Coordinate, ShotResult> onShotResolved)
     {
@@ -45,6 +69,12 @@ public class MachineTurnThread extends Thread
         this.setName("machine-turn-thread");
     }
 
+    /**
+     * Executes the machine turn by waiting for the configured delay,
+     * selecting a target coordinate, resolving the shot against the
+     * human board, and notifying the JavaFX Application Thread with
+     * the resulting coordinate and shot outcome.
+     */
     @Override
     public void run()
     {
