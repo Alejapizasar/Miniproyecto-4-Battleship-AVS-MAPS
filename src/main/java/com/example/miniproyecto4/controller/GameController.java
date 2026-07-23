@@ -115,6 +115,12 @@ public class GameController
     private boolean paused;
     private boolean persistenceWarningShown;
 
+    // Single source of truth for "where would ENTER fire", same role
+    // cursorCoordinate plays in PlayerController for ship placement.
+    // Only the enemy board (girdIa) is navigable; the player's own board
+    // is read-only during this phase.
+    private Coordinate enemyCursorCoordinate;
+
     public GameController()
     {
         this.playerCellViews = new HashMap<>();
@@ -123,6 +129,7 @@ public class GameController
         this.sceneNavigator = new SceneNavigator();
         this.turnLock = new Object();
         this.humanTurn = true;
+        this.enemyCursorCoordinate = new Coordinate(0, 0);
     }
 
     @FXML
@@ -130,19 +137,30 @@ public class GameController
     {
         this.buildGrid(this.gridUser, this.playerCellViews, false);
         this.buildGrid(this.girdIa, this.enemyCellViews, true);
+        this.girdIa.setFocusTraversable(true);
 
         this.exitBtn.setOnAction(event -> this.handleExit());
         this.pauseBtn.setOnAction(event -> this.handlePause());
         this.saveGameBtn.setOnAction(event -> this.handleSaveGame());
 
-        // HU-3 professor-only shortcut: attached as soon as the Scene
-        // actually exists (not yet during initialize()), same pattern
-        // PlayerController uses for its keyboard shortcuts.
+        // Keyboard shortcuts (arrows to move the firing cursor over
+        // girdIa, ENTER to fire) plus the HU-3 professor-only shortcut:
+        // attached as soon as the Scene actually exists (not yet during
+        // initialize()), same pattern PlayerController uses.
         this.gridUser.sceneProperty().addListener((observable, oldScene, newScene) ->
         {
             if (newScene != null)
             {
                 newScene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyPressed);
+
+                // saveGameBtn/pauseBtn/exitBtn are all focusTraversable
+                // Buttons, so without an explicit request one of them
+                // (not girdIa) would end up with the initial focus and
+                // arrow keys/ENTER would silently do nothing. Nested
+                // runLater so this wins the race against JavaFX's own
+                // default-focus assignment (same fix as PlayerController).
+                Platform.runLater(() -> Platform.runLater(() -> this.girdIa.requestFocus()));
+                this.updateEnemyCursorHighlight(true);
             }
         });
     }
@@ -266,6 +284,7 @@ public class GameController
                 {
                     EnemyCellInteractionHandler handler = new EnemyCellInteractionHandler(coordinate);
                     cellView.setOnMouseClicked(event -> handler.onCellClicked(coordinate));
+                    cellView.setOnMouseEntered(event -> this.moveEnemyCursorTo(coordinate));
                 }
             }
         }
@@ -656,14 +675,70 @@ public class GameController
         this.paintEnemyFleet(this.verificationModeActive ? CellState.SHIP : CellState.WATER);
     }
 
-    // Only listens for VERIFY_BOARD_SHORTCUT (Ctrl+Shift+V); every other key
-    // is ignored and left to bubble up normally.
+    // Ctrl+Shift+V is the professor-only verification toggle; arrows move
+    // the firing cursor over girdIa and ENTER fires at it, same shooting
+    // path a mouse click uses (handlePlayerShot), so a keyboard kill on
+    // the last ship reaches handleVictory() exactly like a mouse kill
+    // does. Rotation (R) does not apply here - the fleet is already
+    // placed by the time this screen is shown.
     private void handleKeyPressed(KeyEvent event)
     {
         if (VERIFY_BOARD_SHORTCUT.match(event))
         {
             this.handleVerifyEnemyBoard();
             event.consume();
+            return;
+        }
+
+        switch (event.getCode())
+        {
+            case UP:
+                this.moveEnemyCursorBy(-1, 0);
+                event.consume();
+                break;
+            case DOWN:
+                this.moveEnemyCursorBy(1, 0);
+                event.consume();
+                break;
+            case LEFT:
+                this.moveEnemyCursorBy(0, -1);
+                event.consume();
+                break;
+            case RIGHT:
+                this.moveEnemyCursorBy(0, 1);
+                event.consume();
+                break;
+            case ENTER:
+                this.handlePlayerShot(this.enemyCursorCoordinate);
+                event.consume();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void moveEnemyCursorBy(int rowDelta, int columnDelta)
+    {
+        int newRow = Math.max(0, Math.min(Board.SIZE - 1,
+                this.enemyCursorCoordinate.getRow() + rowDelta));
+        int newColumn = Math.max(0, Math.min(Board.SIZE - 1,
+                this.enemyCursorCoordinate.getColumn() + columnDelta));
+        this.moveEnemyCursorTo(new Coordinate(newRow, newColumn));
+    }
+
+    private void moveEnemyCursorTo(Coordinate coordinate)
+    {
+        this.updateEnemyCursorHighlight(false);
+        this.enemyCursorCoordinate = coordinate;
+        this.updateEnemyCursorHighlight(true);
+    }
+
+    private void updateEnemyCursorHighlight(boolean focused)
+    {
+        BoardCellView cellView = this.enemyCellViews.get(this.enemyCursorCoordinate);
+        if (cellView != null)
+        {
+            cellView.setKeyboardFocused(focused);
         }
     }
 

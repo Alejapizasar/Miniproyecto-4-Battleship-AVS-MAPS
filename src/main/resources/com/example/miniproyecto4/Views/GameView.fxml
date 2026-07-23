@@ -729,7 +729,7 @@
                               <Font name="Courier New" size="14.0" />
                            </font>
                         </Label>
-                        <GridPane fx:id="girdIa" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="400.0" prefWidth="400.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;">
+                        <GridPane fx:id="girdIa" alignment="CENTER_LEFT" gridLinesVisible="true" prefHeight="400.0" prefWidth="400.0" style="-fx-alignment: CENTER; -fx-border-color: #8b7043; -fx-border-radius: 2;" stylesheets="@../css/battleship2game.css">
                            <columnConstraints>
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

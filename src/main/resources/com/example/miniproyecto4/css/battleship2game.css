@@ -1,0 +1,224 @@
+/*
+ * battleship.css
+ * Estilos generales de Batalla Naval: tablero, botones y estados de celda.
+ * Los colores de las celdas ya se pintan por codigo (BoardCellView), este
+ * archivo cubre bordes, hover, y la "piel" del resto de la interfaz.
+ *
+ * Author: Alejandro Valencia Sandoval
+ * Author: Maria Alejandra Pizarro Sarria
+ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Verdana", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #04263B, #08324D);
+}
+
+/* ---------- Tablero ---------- */
+
+.board-cell {
+    -fx-border-color: #145374;
+    -fx-border-width: 0.5;
+    -fx-cursor: hand;
+}
+
+.board-cell:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.55), 6, 0.3, 0, 0);
+}
+
+.cell-miss {
+    -fx-opacity: 0.85;
+}
+
+.cell-hit {
+    -fx-effect: dropshadow(gaussian, rgba(255,120,0,0.65), 8, 0.4, 0, 0);
+}
+
+.cell-sunk {
+    -fx-opacity: 0.9;
+}
+
+/* Applied once a cell has a final shot result (miss/hit/sunk): no hand
+   cursor and no hover glow, so it visually reads as "already resolved".
+   The cell is still clickable on purpose (BoardCellView no longer sets
+   mouseTransparent) so a repeat click still reaches the controller and
+   triggers the InvalidShotException/Alert feedback loop; this is a
+   visual hint only, not a click blocker. */
+.cell-resolved {
+    -fx-cursor: default;
+}
+
+.cell-resolved:hover {
+    -fx-effect: none;
+}
+
+.grid-header-label {
+    -fx-text-fill: #CFE8F5;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-alignment: center;
+}
+
+/* Current target cell: set by arrow-key navigation AND by mouse hover
+   (moveEnemyCursorTo/moveCursorTo keep both input methods in sync), so
+   whichever one the player is using, this is the one visual answer to
+   "where would ENTER/click land right now". */
+.cell-cursor {
+    -fx-border-color: #F4C95D;
+    -fx-border-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(244,201,93,0.65), 10, 0.45, 0, 0);
+}
+
+/* ---------- Alertas tematizadas ---------- */
+/* Applied by DialogHelper to every Alert's DialogPane so the popups match
+   the rest of the naval command theme instead of the default OS look. */
+
+.themed-alert {
+    -fx-background-color: linear-gradient(to bottom, #0B2A40, #103A57);
+    -fx-border-color: #8B7043;
+    -fx-border-width: 2;
+    -fx-font-family: "Courier New";
+}
+
+.themed-alert > .header-panel {
+    -fx-background-color: #0A2033;
+    -fx-border-color: #8B7043;
+    -fx-border-width: 0 0 1 0;
+}
+
+.themed-alert > .header-panel > .header-panel-label,
+.themed-alert .header-panel .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Courier New";
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+.themed-alert .content.label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+
+/* Custom icon badge (set via DialogHelper's setGraphic), replacing the
+   default OS-style alert icon with a nautical symbol that matches the
+   rest of the game: an anchor for info, a warning pennant for warning,
+   a skull for error (your shot missed badly / something sank). */
+.alert-icon {
+    -fx-font-size: 22px;
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 2;
+}
+
+.alert-icon-info {
+    -fx-background-color: linear-gradient(to bottom, #2B8CC4, #14506F);
+    -fx-border-color: #8FD0F0;
+}
+
+.alert-icon-warning {
+    -fx-background-color: linear-gradient(to bottom, #E9C77B, #C9A227);
+    -fx-border-color: #FFE7A8;
+}
+
+.alert-icon-error {
+    -fx-background-color: linear-gradient(to bottom, #C43F3F, #7A2020);
+    -fx-border-color: #FF9E9E;
+}
+
+.themed-alert .button-bar .button {
+    -fx-background-color: linear-gradient(to bottom, #1F6F9C, #14506F);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-border-color: #8B7043;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+    -fx-padding: 6 16 6 16;
+}
+
+.themed-alert .button-bar .button:hover {
+    -fx-background-color: linear-gradient(to bottom, #2B8CC4, #1B6C93);
+}
+
+/* Left accent strip per alert type, so a warning reads differently from
+   an error at a glance without needing to read the title first. */
+.themed-alert.alert-warning {
+    -fx-border-color: #C9A227;
+}
+
+.themed-alert.alert-error {
+    -fx-border-color: #A83232;
+}
+
+.themed-alert.alert-error .button-bar .button {
+    -fx-background-color: linear-gradient(to bottom, #A83232, #7A2020);
+}
+
+.themed-alert.alert-error .button-bar .button:hover {
+    -fx-background-color: linear-gradient(to bottom, #C43F3F, #922828);
+}
+
+.themed-alert.alert-info {
+    -fx-border-color: #1F6F9C;
+}
+
+/* ---------- Botones ---------- */
+
+.button {
+    -fx-background-color: linear-gradient(to bottom, #1F6F9C, #14506F);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 3, 0.2, 0, 1);
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #2B8CC4, #1B6C93);
+}
+
+.button:pressed {
+    -fx-background-color: #0F4A66;
+}
+
+.button:disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
+}
+
+#quitBtn, #quitBtn2 {
+    -fx-background-color: linear-gradient(to bottom, #A83232, #7A2020);
+}
+
+#quitBtn:hover, #quitBtn2:hover {
+    -fx-background-color: linear-gradient(to bottom, #C43F3F, #922828);
+}
+
+/* ---------- Campos de texto ---------- */
+
+.text-field {
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 13px;
+}
+
+/* ---------- Panel / titulos ---------- */
+
+.title-label {
+    -fx-text-fill: #E9F6FF;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.subtitle-label {
+    -fx-text-fill: #9FCBE0;
+    -fx-font-size: 13px;
+}

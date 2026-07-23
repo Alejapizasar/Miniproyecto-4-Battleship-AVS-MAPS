@@ -255,9 +255,18 @@ public class PlayerController
         }
         catch (PlacementException exception)
         {
-            DialogHelper.showWarning("Ubicación inválida",
+            // placeShipAt() can be reached from handleKeyPressed(), a
+            // Scene-level KEY_PRESSED filter that is still mid-dispatch
+            // when this runs. Calling Alert.showAndWait() synchronously
+            // in that context opens the dialog before JavaFX has finished
+            // a full layout/CSS pass, so the wrapped message Label gets
+            // measured too early and the text renders clipped. Deferring
+            // with runLater() lets the current event finish dispatching
+            // first, so the Alert autosizes against a fully laid-out
+            // scene on the next pulse.
+            Platform.runLater(() -> DialogHelper.showWarning("Ubicación inválida",
                     "No puedes colocar el " + nextShip.getName() + " ahí: se sale del tablero "
-                            + "o se superpone con otro barco ya colocado. Elige otra celda u orientación.");
+                            + "o se superpone con otro barco ya colocado. Elige otra celda u orientación."));
         }
     }
 
@@ -285,9 +294,13 @@ public class PlayerController
             }
             catch (PlacementException exception)
             {
-                DialogHelper.showWarning("Colocación aleatoria",
+                // Same runLater rationale as in placeShipAt(): this can be
+                // triggered from a key/action-event chain that hasn't
+                // fully unwound, so the Alert must be deferred to render
+                // with correct sizing instead of a clipped message.
+                Platform.runLater(() -> DialogHelper.showWarning("Colocación aleatoria",
                         "No se pudo ubicar aleatoriamente el " + ship.getName()
-                                + ". Presiona 'Colocación aleatoria' de nuevo para reintentar.");
+                                + ". Presiona 'Colocación aleatoria' de nuevo para reintentar."));
             }
         }
         this.refreshAllCells();
@@ -297,9 +310,12 @@ public class PlayerController
     {
         if (!this.pendingShips.isEmpty())
         {
-            DialogHelper.showWarning("Flota incompleta",
+            // handlePlay() is also reachable from handleKeyPressed()
+            // (ENTER), so defer for the same reason as the other alerts
+            // in this controller.
+            Platform.runLater(() -> DialogHelper.showWarning("Flota incompleta",
                     "Aún te falta colocar " + this.pendingShips.size()
-                            + " barco(s) antes de empezar la partida.");
+                            + " barco(s) antes de empezar la partida."));
             return;
         }
 
@@ -316,8 +332,8 @@ public class PlayerController
         }
         catch (IOException exception)
         {
-            DialogHelper.showError("No se pudo iniciar la partida",
-                    "No fue posible abrir la pantalla de juego.", exception);
+            Platform.runLater(() -> DialogHelper.showError("No se pudo iniciar la partida",
+                    "No fue posible abrir la pantalla de juego.", exception));
         }
     }
 
