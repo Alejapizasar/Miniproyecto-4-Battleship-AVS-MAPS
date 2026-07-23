@@ -121,8 +121,11 @@ public class PlayerController
 
                 // Default focus otherwise lands on namePlayerTextField
                 // (first focusable control), which is exactly why the
-                // shortcuts looked "broken" before. Move it to the board.
-                Platform.runLater(() -> this.playerBoard.requestFocus());
+                // shortcuts looked "broken" before. JavaFX assigns that
+                // default focus on its own pulse, so a single runLater
+                // can still lose the race and get overridden; nesting a
+                // second runLater guarantees ours runs strictly after.
+                Platform.runLater(() -> Platform.runLater(() -> this.playerBoard.requestFocus()));
                 this.updateCursorHighlight(true);
             }
         });

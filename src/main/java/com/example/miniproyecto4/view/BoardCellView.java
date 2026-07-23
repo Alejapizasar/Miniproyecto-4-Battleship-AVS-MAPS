@@ -72,13 +72,14 @@ public class BoardCellView extends StackPane
         this.state = newState;
         this.render();
 
-        // Error prevention (Nielsen heuristic): once a cell has a final shot
-        // result, it can no longer be clicked at all, instead of only
-        // rejecting the click afterwards with an InvalidShotException/Alert.
+        // Visual-only marker for a cell with a final shot result. Clicking
+        // it again still has to reach the controller so Board.receiveShot()
+        // can throw InvalidShotException and DialogHelper shows the "ya fue
+        // disparada antes" warning - that feedback loop is a requirement,
+        // not just a nice-to-have, so this cell must stay clickable.
         boolean resolved = newState == CellState.MISS
                 || newState == CellState.HIT
                 || newState == CellState.SUNK;
-        this.setMouseTransparent(resolved);
         this.getStyleClass().remove("cell-resolved");
         if (resolved)
         {
